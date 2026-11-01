@@ -1,6 +1,6 @@
 import Foundation
 import Logging
-import LumeRecorderKit
+import StreamenRecorderKit
 
 /// The wired-up object graph shared by the HTTP layer and the services.
 public struct RecorderServices: Sendable {
@@ -17,7 +17,7 @@ public struct RecorderServices: Sendable {
         launcher: any RecordingProcessLauncher,
         disk: any DiskSpaceProviding = FileSystemDiskSpace(),
         now: @escaping NowProvider = { Date() },
-        logger: Logger = Logger(label: "lume-recorder"),
+        logger: Logger = Logger(label: "streamen-recorder"),
         configureScheduler: (inout RecordingScheduler.Options) -> Void = { _ in }
     ) throws {
         self.config = config
@@ -41,7 +41,7 @@ public struct RecorderServices: Sendable {
             id: store.identity.id,
             name: config.serverName,
             version: RecorderVersion.current,
-            apiVersion: LumeRecorderAPI.version
+            apiVersion: StreamenRecorderAPI.version
         )
     }
 }

@@ -1,4 +1,4 @@
-# dmgbuild settings for LumeRecorder-<version>.dmg: the app next to an
+# dmgbuild settings for StreamenRecorder-<version>.dmg: the app next to an
 # Applications link, with an arrow between them.
 # Used by scripts/build-app.sh: dmgbuild -s dmg-settings.py -D app=… -D icon=…
 import os.path

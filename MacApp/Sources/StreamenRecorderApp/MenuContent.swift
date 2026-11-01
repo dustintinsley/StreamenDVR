@@ -39,7 +39,7 @@ struct MenuContent: View {
         HStack(alignment: .firstTextBaseline) {
             Circle().fill(statusColor).frame(width: 8, height: 8)
             VStack(alignment: .leading, spacing: 2) {
-                Text("LumeRecorder").font(.headline)
+                Text("StreamenRecorder").font(.headline)
                 Text("\(controller.config.serverName) · port \(String(controller.config.port))")
                     .font(.caption).foregroundStyle(.secondary)
             }
@@ -64,7 +64,7 @@ struct MenuContent: View {
                 Text(code.formatted)
                     .font(.system(size: 32, weight: .semibold, design: .monospaced))
                     .textSelection(.enabled)
-                Text("In Lume, add this recorder and enter the code. A new code in \(Text(timerInterval: Date.now ... max(Date.now, code.expiresAt)))")
+                Text("In Streamen, add this recorder and enter the code. A new code in \(Text(timerInterval: Date.now ... max(Date.now, code.expiresAt)))")
                     .font(.caption).foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -100,7 +100,7 @@ struct MenuContent: View {
         VStack(alignment: .leading, spacing: 4) {
             Label("ffmpeg not found", systemImage: "exclamationmark.triangle.fill")
                 .foregroundStyle(.orange)
-            Text("LumeRecorder can't find the ffmpeg it ships with, so recordings fail. Download LumeRecorder again and replace the app.")
+            Text("StreamenRecorder can't find the ffmpeg it ships with, so recordings fail. Download StreamenRecorder again and replace the app.")
                 .font(.caption).foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
         }
@@ -127,7 +127,7 @@ struct MenuContent: View {
             Button(controller.isRunning ? "Restart Recorder" : "Start Recorder") {
                 Task { await controller.restart() }
             }
-            Button("Quit LumeRecorder") { quit() }
+            Button("Quit StreamenRecorder") { quit() }
                 .keyboardShortcut("q")
         }
         .buttonStyle(.borderless)
@@ -144,7 +144,7 @@ struct MenuContent: View {
             NSApp.activate()
             let alert = NSAlert()
             alert.messageText = "Quit while recording?"
-            alert.informativeText = "Recordings in progress stop now and continue when LumeRecorder opens again. Anything aired in between is missing."
+            alert.informativeText = "Recordings in progress stop now and continue when StreamenRecorder opens again. Anything aired in between is missing."
             alert.addButton(withTitle: "Quit")
             alert.addButton(withTitle: "Cancel")
             guard alert.runModal() == .alertFirstButtonReturn else { return }

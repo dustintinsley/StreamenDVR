@@ -57,7 +57,7 @@ All notable changes to this project are documented here. The format follows
   per-device bearer tokens stored as SHA-256 hashes.
 - Path-signed (HMAC-SHA256) playback URLs that work for in-progress recordings.
 - Bonjour discovery: `NetService` on macOS, avahi in the Docker image.
-- `LumeRecorderKit`: a zero-dependency Swift client and DTO package for the Lume app.
+- `StreamenRecorderKit`: a zero-dependency Swift client and DTO package for the Streamen app.
 - Multi-stage Docker image (amd64/arm64), docker-compose example and CI workflow.
 - HLS sources with mislabelled subtitle renditions record via `-extension_picky 0`
   (HLS inputs only); sources that fail five quick attempts in a row before any

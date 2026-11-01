@@ -7,7 +7,7 @@ WORKDIR /build
 # Resolve dependencies first so source edits don't invalidate this layer.
 COPY Package.swift Package.resolved ./
 COPY Kit/Package.swift Kit/Package.swift
-RUN mkdir -p Kit/Sources/LumeRecorderKit Kit/Tests/LumeRecorderKitTests \
+RUN mkdir -p Kit/Sources/StreamenRecorderKit Kit/Tests/StreamenRecorderKitTests \
     && swift package resolve
 
 COPY Kit Kit
@@ -15,12 +15,12 @@ COPY Sources Sources
 COPY Tests Tests
 # `--build-system native`: with Swift 6.4's default swiftbuild backend, a
 # --static-swift-stdlib link misses FoundationNetworking's CFURLSessionInterface
-# and libcurl dependencies (pulled in via LumeRecorderKit's URLSession client).
+# and libcurl dependencies (pulled in via StreamenRecorderKit's URLSession client).
 ARG SWIFT_BUILD_FLAGS="-c release --static-swift-stdlib --build-system native"
-RUN swift build ${SWIFT_BUILD_FLAGS} --product lume-recorder \
+RUN swift build ${SWIFT_BUILD_FLAGS} --product streamen-recorder \
     && mkdir -p /staging \
-    && cp "$(swift build ${SWIFT_BUILD_FLAGS} --show-bin-path)/lume-recorder" /staging/ \
-    && ldd /staging/lume-recorder
+    && cp "$(swift build ${SWIFT_BUILD_FLAGS} --show-bin-path)/streamen-recorder" /staging/ \
+    && ldd /staging/streamen-recorder
 
 # ---- Runtime -----------------------------------------------------------------
 FROM ubuntu:24.04
@@ -33,12 +33,12 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     # Standalone avahi: no D-Bus inside the container.
     && sed -i 's/^#\?enable-dbus=.*/enable-dbus=no/' /etc/avahi/avahi-daemon.conf \
     && rm -f /etc/avahi/services/*.service \
-    && useradd --system --uid 10001 --user-group --home-dir /data --no-create-home --shell /usr/sbin/nologin lume \
-    && mkdir -p /data && chown lume:lume /data
+    && useradd --system --uid 10001 --user-group --home-dir /data --no-create-home --shell /usr/sbin/nologin streamen \
+    && mkdir -p /data && chown streamen:streamen /data
 
-COPY --from=build /staging/lume-recorder /usr/local/bin/lume-recorder
+COPY --from=build /staging/streamen-recorder /usr/local/bin/streamen-recorder
 COPY docker/entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-RUN chmod 0755 /usr/local/bin/docker-entrypoint.sh /usr/local/bin/lume-recorder
+RUN chmod 0755 /usr/local/bin/docker-entrypoint.sh /usr/local/bin/streamen-recorder
 
 ENV DATA_DIR=/data \
     PORT=8090 \

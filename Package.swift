@@ -1,15 +1,15 @@
 // swift-tools-version: 6.0
-// LumeRecorder — self-hosted DVR server for the Lume IPTV app.
+// StreamenRecorder — self-hosted DVR server for the Streamen IPTV app.
 
 import PackageDescription
 
 let swiftSettings: [SwiftSetting] = [.swiftLanguageMode(.v6)]
 
 let package = Package(
-    name: "LumeRecorder",
+    name: "StreamenRecorder",
     platforms: [.macOS(.v15)],
     products: [
-        .executable(name: "lume-recorder", targets: ["lume-recorder"]),
+        .executable(name: "streamen-recorder", targets: ["streamen-recorder"]),
         .library(name: "RecorderCore", targets: ["RecorderCore"]),
     ],
     dependencies: [
@@ -25,7 +25,7 @@ let package = Package(
         .target(
             name: "RecorderCore",
             dependencies: [
-                .product(name: "LumeRecorderKit", package: "Kit"),
+                .product(name: "StreamenRecorderKit", package: "Kit"),
                 .product(name: "Hummingbird", package: "hummingbird"),
                 .product(name: "Crypto", package: "swift-crypto"),
                 .product(name: "Logging", package: "swift-log"),
@@ -35,7 +35,7 @@ let package = Package(
             swiftSettings: swiftSettings
         ),
         .executableTarget(
-            name: "lume-recorder",
+            name: "streamen-recorder",
             dependencies: [
                 "RecorderCore",
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),

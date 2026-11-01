@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Builds the ffmpeg bundled into LumeRecorder.app: universal, LGPL, no external
+# Builds the ffmpeg bundled into StreamenRecorder.app: universal, LGPL, no external
 # libraries (TLS via SecureTransport, zlib from the OS), so the binary links
 # only system libraries and runs on any Mac with macOS 15+.
 #
@@ -67,7 +67,7 @@ strip -x "$work/ffmpeg"
 first_src="$work/src-${archs%% *}"
 cp "$first_src/COPYING.LGPLv2.1" "$work/LICENSE.txt"
 cat > "$work/README.txt" <<EOF
-LumeRecorder bundles FFmpeg $version (https://ffmpeg.org), licensed under the
+StreamenRecorder bundles FFmpeg $version (https://ffmpeg.org), licensed under the
 GNU Lesser General Public License v2.1 or later (see LICENSE.txt). It is an unmodified
 build of the official source release:
 

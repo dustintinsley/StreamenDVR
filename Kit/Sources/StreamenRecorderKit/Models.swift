@@ -3,7 +3,7 @@ import Foundation
 // MARK: - API constants
 
 /// Version and path constants of the HTTP API this Kit speaks.
-public enum LumeRecorderAPI {
+public enum StreamenRecorderAPI {
     /// The API version this Kit implements. Bumped only on breaking changes.
     public static let version = 1
     /// Path prefix of every JSON endpoint.
@@ -13,7 +13,7 @@ public enum LumeRecorderAPI {
 }
 
 /// Machine-readable error codes the server returns in `ErrorResponse.error.code`.
-public enum LumeRecorderErrorCode {
+public enum StreamenRecorderErrorCode {
     public static let unauthorized = "unauthorized"
     public static let pairingInvalid = "pairing_invalid"
     public static let rateLimited = "rate_limited"
@@ -165,7 +165,7 @@ public struct Recording: Codable, Sendable, Hashable, Identifiable {
     public var channelName: String?
     public var channelLogoURL: URL?
     public var programmeDescription: String?
-    /// Opaque, Lume-defined reference echoed back unchanged.
+    /// Opaque, Streamen-defined reference echoed back unchanged.
     public var sourceRef: String?
     public var start: Date
     public var end: Date
@@ -224,7 +224,7 @@ public struct CreateRecordingRequest: Codable, Sendable, Hashable {
     public var programmeDescription: String?
     public var start: Date
     public var end: Date
-    /// Opaque, Lume-defined reference (e.g. channel + programme id).
+    /// Opaque, Streamen-defined reference (e.g. channel + programme id).
     public var sourceRef: String?
 
     public init(

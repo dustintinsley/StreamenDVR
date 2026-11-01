@@ -1,9 +1,9 @@
 import Foundation
 import Logging
-import LumeRecorderKit
+import StreamenRecorderKit
 
 /// The current pairing code as written to `DATA_DIR/pairing-code.json` for
-/// `lume-recorder pair` to read.
+/// `streamen-recorder pair` to read.
 public struct PairingCodeFile: Codable, Sendable, Hashable {
     public var code: String
     public var expiresAt: Date
@@ -18,7 +18,7 @@ public struct PairingCodeFile: Codable, Sendable, Hashable {
     public static func read(from directory: URL) -> PairingCodeFile? {
         let url = directory.appendingPathComponent(fileName)
         guard let data = try? Data(contentsOf: url) else { return nil }
-        return try? LumeRecorderCoding.makeDecoder().decode(PairingCodeFile.self, from: data)
+        return try? StreamenRecorderCoding.makeDecoder().decode(PairingCodeFile.self, from: data)
     }
 }
 
@@ -49,7 +49,7 @@ public actor PairingManager {
         rotationInterval: TimeInterval = 600,
         maxFailures: Int = 5,
         failureWindow: TimeInterval = 60,
-        logger: Logger = Logger(label: "lume-recorder.pairing")
+        logger: Logger = Logger(label: "streamen-recorder.pairing")
     ) {
         self.directory = directory
         self.now = now
@@ -124,7 +124,7 @@ public actor PairingManager {
 
     private static func write(_ code: PairingCodeFile, to directory: URL, logger: Logger) {
         do {
-            let data = try LumeRecorderCoding.makeEncoder().encode(code)
+            let data = try StreamenRecorderCoding.makeEncoder().encode(code)
             try AtomicFile.write(data, to: directory.appendingPathComponent(PairingCodeFile.fileName))
         } catch {
             logger.warning("Couldn't write the pairing code file: \(error)")

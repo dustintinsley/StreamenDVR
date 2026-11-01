@@ -2,7 +2,7 @@ import Foundation
 import HTTPTypes
 import Hummingbird
 import HummingbirdTesting
-import LumeRecorderKit
+import StreamenRecorderKit
 @testable import RecorderCore
 import Testing
 
@@ -53,11 +53,11 @@ struct APIHarness {
     }
 
     static func body(_ value: some Encodable) -> ByteBuffer {
-        ByteBuffer(bytes: try! LumeRecorderCoding.makeEncoder().encode(value))
+        ByteBuffer(bytes: try! StreamenRecorderCoding.makeEncoder().encode(value))
     }
 
     static func decode<T: Decodable>(_ type: T.Type, _ response: TestResponse) throws -> T {
-        try LumeRecorderCoding.makeDecoder().decode(T.self, from: Data(response.body.readableBytesView))
+        try StreamenRecorderCoding.makeDecoder().decode(T.self, from: Data(response.body.readableBytesView))
     }
 
     static func errorCode(_ response: TestResponse) -> String? {
@@ -73,7 +73,7 @@ struct APIHarness {
         return CreateRecordingRequest(
             streamURL: URL(string: "http://user:pass@provider.example/live/user/pass/7.ts")!,
             title: title,
-            channelName: "Lume One",
+            channelName: "Streamen One",
             start: now.addingTimeInterval(start),
             end: now.addingTimeInterval(end),
             sourceRef: "ref-\(title)"

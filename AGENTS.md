@@ -1,15 +1,15 @@
-# LumeRecorder: Agent Guide
+# StreamenRecorder: Agent Guide
 
-A self-hosted DVR server for the Lume IPTV app (`bilipp/Lume`). Lume sends
+A self-hosted DVR server for the Streamen IPTV app (`bilipp/Lume`). Streamen sends
 "record this stream from A to B". The server records it with ffmpeg to HLS
 and later hands out signed playback URLs.
 
 ## Layout
 
 ```
-Package.swift                 server package (RecorderCore + lume-recorder)
-Kit/                          LumeRecorderKit: wire DTOs + async client, ZERO deps
-  Sources/LumeRecorderKit/    Models, Coding (shared JSON coders), Client, Error
+Package.swift                 server package (RecorderCore + streamen-recorder)
+Kit/                          StreamenRecorderKit: wire DTOs + async client, ZERO deps
+  Sources/StreamenRecorderKit/    Models, Coding (shared JSON coders), Client, Error
   Tests/                      Codable round-trips, normalizedBaseURL, client w/ URLProtocol stub
 Sources/RecorderCore/
   RecorderConfig.swift        env/CLI config, version
@@ -20,18 +20,18 @@ Sources/RecorderCore/
   Security/                   PairingManager, PlaybackSigner, Secrets, Redactor
   HTTP/                       Routes, request context, bearer auth, JSON errors
   Discovery/                  NetService advertiser (macOS only)
-Sources/lume-recorder/        CLI: serve (default) | pair | server-id
-MacApp/                       LumeRecorder.app: separate package, SwiftUI MenuBarExtra
-  Sources/LumeRecorderApp/    ServerController (ServiceGroup, polling, sleep assertion,
+Sources/streamen-recorder/        CLI: serve (default) | pair | server-id
+MacApp/                       StreamenRecorder.app: separate package, SwiftUI MenuBarExtra
+  Sources/StreamenRecorderApp/    ServerController (ServiceGroup, polling, sleep assertion,
                               SMAppService), menu UI, file log handler
-  Resources/                  Info.plist, AppIcon.icon (Lume's icon + record badge),
+  Resources/                  Info.plist, AppIcon.icon (Streamen's icon + record badge),
                               dmg-settings.py (dmgbuild layout)
   scripts/build-ffmpeg.sh     pinned LGPL ffmpeg, universal, system libraries only
   scripts/build-app.sh        universal build → .app (bundled ffmpeg, icon, signing,
                               notarization) → drag-to-Applications DMG in MacApp/dist/
 Tests/RecorderCoreTests/      Swift Testing: store, scheduler (fake launcher), recovery,
                               pairing, signing, routes (HummingbirdTesting), real ffmpeg
-docker/entrypoint.sh          avahi service file + avahi-daemon, then drop to `lume`
+docker/entrypoint.sh          avahi service file + avahi-daemon, then drop to `streamen`
 ```
 
 ## How a recording flows
@@ -78,13 +78,13 @@ talking only to the `RecordingProcess` protocol.
 - **State writes are atomic** (temp file + `rename`) and go through the single
   `RecorderStore` actor. Don't write those JSON files from anywhere else.
 - **The Kit has zero dependencies** (Foundation only, FoundationNetworking on
-  Linux). The Lume app links it as a local package. A dependency there lands in
+  Linux). The Streamen app links it as a local package. A dependency there lands in
   the app's graph. Everything public is `Sendable`, with no actor isolation.
 - **API changes go through Kit + server in lockstep.** DTOs are defined once in
   the Kit and used by the server. Both sides build their coders from
-  `LumeRecorderCoding`. Additive changes (new optional fields, new
+  `StreamenRecorderCoding`. Additive changes (new optional fields, new
   `RecordingStatus` raw values, which old clients decode as `.unknown`) keep
-  `apiVersion` 1. Anything breaking bumps `LumeRecorderAPI.version`, gets a new
+  `apiVersion` 1. Anything breaking bumps `StreamenRecorderAPI.version`, gets a new
   path prefix and a CHANGELOG entry. The client rejects servers whose
   `apiVersion` differs.
 - **The client never retries POST/DELETE.** Idempotency keys exist so the app
@@ -120,8 +120,8 @@ talking only to the `RecordingProcess` protocol.
 ```bash
 swift build && swift test
 (cd Kit && swift test)
-xcodebuild build -scheme LumeRecorderKit -destination 'generic/platform=tvOS'   # from Kit/
-docker build -t lumerecorder .
+xcodebuild build -scheme StreamenRecorderKit -destination 'generic/platform=tvOS'   # from Kit/
+docker build -t streamenrecorder .
 (cd MacApp && swift build)          # macOS only; keeps the root package Linux-clean
 ```
 

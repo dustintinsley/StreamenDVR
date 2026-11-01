@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Builds LumeRecorder.app (universal, bundled ffmpeg) and a drag-to-Applications
-# LumeRecorder-<version>.dmg in MacApp/dist/.
+# Builds StreamenRecorder.app (universal, bundled ffmpeg) and a drag-to-Applications
+# StreamenRecorder-<version>.dmg in MacApp/dist/.
 #
 #   FFMPEG_BINARY=/path/to/ffmpeg          bundle this ffmpeg instead of building
 #                                          one with scripts/build-ffmpeg.sh
@@ -12,27 +12,27 @@
 #   NOTARY_KEY_PATH=AuthKey.p8 NOTARY_KEY_ID=… NOTARY_ISSUER_ID=…
 #                                          notarize with an App Store Connect API key
 #                                          instead of a profile (CI)
-#   BUNDLE_ID=com.example.lumerecorder     override the bundle identifier
+#   BUNDLE_ID=com.example.streamenrecorder     override the bundle identifier
 #   ARCHS="arm64 x86_64"                   architectures to build
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
 root="$(pwd)"
 dist="$root/dist"
-app="$dist/LumeRecorder.app"
-bundle_id="${BUNDLE_ID:-com.bilipp.lumerecorder}"
+app="$dist/StreamenRecorder.app"
+bundle_id="${BUNDLE_ID:-com.hardheaded.streamenrecorder}"
 archs="${ARCHS:-arm64 x86_64}"
 export ARCHS="$archs"
 version="$(sed -n 's/.*static let current = "\(.*\)".*/\1/p' ../Sources/RecorderCore/RecorderConfig.swift)"
 build_number="$(git rev-list --count HEAD 2>/dev/null || echo 1)"
-dmg="$dist/LumeRecorder-$version.dmg"
+dmg="$dist/StreamenRecorder-$version.dmg"
 
 arch_flags=()
 for arch in $archs; do arch_flags+=(--arch "$arch"); done
 
-echo "==> Building LumeRecorder $version ($build_number) for $archs"
-swift build -c release --product LumeRecorderApp "${arch_flags[@]}"
-bin_dir="$(swift build -c release --product LumeRecorderApp "${arch_flags[@]}" --show-bin-path)"
+echo "==> Building StreamenRecorder $version ($build_number) for $archs"
+swift build -c release --product StreamenRecorderApp "${arch_flags[@]}"
+bin_dir="$(swift build -c release --product StreamenRecorderApp "${arch_flags[@]}" --show-bin-path)"
 
 if [[ -n "${FFMPEG_BINARY:-}" ]]; then
     ffmpeg_binary="$FFMPEG_BINARY"
@@ -51,7 +51,7 @@ fi
 echo "==> Assembling $app"
 rm -rf "$app"
 mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources"
-cp "$bin_dir/LumeRecorderApp" "$app/Contents/MacOS/LumeRecorder"
+cp "$bin_dir/StreamenRecorderApp" "$app/Contents/MacOS/StreamenRecorder"
 cp "$ffmpeg_binary" "$app/Contents/MacOS/ffmpeg"
 chmod 755 "$app/Contents/MacOS/ffmpeg"
 if [[ -n "$ffmpeg_notes" ]]; then
@@ -89,7 +89,7 @@ if [[ ${#notary_auth[@]} -gt 0 ]]; then
     [[ "$identity" != "-" ]] || { echo "error: notarization needs SIGN_IDENTITY" >&2; exit 1; }
     # Staple the app itself too, so a copy dragged out of the DMG opens offline.
     echo "==> Notarizing the app"
-    zip="$root/.build/LumeRecorder-notarize.zip"
+    zip="$root/.build/StreamenRecorder-notarize.zip"
     rm -f "$zip"
     ditto -c -k --keepParent "$app" "$zip"
     notarize "$zip"
@@ -106,7 +106,7 @@ if [[ ! -x "$venv/bin/dmgbuild" ]]; then
 fi
 rm -f "$dmg"
 "$venv/bin/dmgbuild" -s Resources/dmg-settings.py -D app="$app" \
-    -D icon="$app/Contents/Resources/AppIcon.icns" "LumeRecorder" "$dmg"
+    -D icon="$app/Contents/Resources/AppIcon.icns" "StreamenRecorder" "$dmg"
 
 if [[ "$identity" != "-" ]]; then
     codesign --force --timestamp --sign "$identity" "$dmg"

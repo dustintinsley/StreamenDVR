@@ -76,8 +76,8 @@
           ],
           "glass": false,
           "hidden": false,
-          "image-name": "lume-bw.svg",
-          "name": "lume-bw",
+          "image-name": "streamen-bw.svg",
+          "name": "streamen-bw",
           "position": {
             "scale": 2,
             "translation-in-points": [
@@ -129,8 +129,8 @@
           ],
           "glass": false,
           "hidden": true,
-          "image-name": "lume-bw.svg",
-          "name": "lume-bw",
+          "image-name": "streamen-bw.svg",
+          "name": "streamen-bw",
           "position": {
             "scale": 2,
             "translation-in-points": [

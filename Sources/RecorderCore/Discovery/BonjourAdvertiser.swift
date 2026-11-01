@@ -1,17 +1,17 @@
 import Foundation
 import Logging
-import LumeRecorderKit
+import StreamenRecorderKit
 import ServiceLifecycle
 
 /// TXT record contents shared by the macOS advertiser and the Docker avahi file.
 public enum BonjourTXT {
     public static func record(serverID: UUID) -> [String: String] {
-        ["id": serverID.uuidString.lowercased(), "version": RecorderVersion.current, "api": String(LumeRecorderAPI.version)]
+        ["id": serverID.uuidString.lowercased(), "version": RecorderVersion.current, "api": String(StreamenRecorderAPI.version)]
     }
 }
 
 #if canImport(Darwin)
-    /// Advertises `_lume-recorder._tcp` via `NetService` on a dedicated run-loop
+    /// Advertises `_streamen-recorder._tcp` via `NetService` on a dedicated run-loop
     /// thread (an async `main` never spins `RunLoop.main`). Used for macOS dev
     /// runs; Linux/Docker advertises through avahi from the entrypoint script.
     public final class BonjourAdvertiser: NSObject, NetServiceDelegate, @unchecked Sendable {
@@ -31,7 +31,7 @@ public enum BonjourTXT {
 
         public func start() {
             let thread = Thread { [self] in
-                let service = NetService(domain: "local.", type: LumeRecorderClient.bonjourServiceType + ".", name: name, port: port)
+                let service = NetService(domain: "local.", type: StreamenRecorderClient.bonjourServiceType + ".", name: name, port: port)
                 service.setTXTRecord(NetService.data(fromTXTRecord: txt.mapValues { Data($0.utf8) }))
                 service.delegate = self
                 service.schedule(in: .current, forMode: .default)
@@ -53,7 +53,7 @@ public enum BonjourTXT {
         }
 
         public func netServiceDidPublish(_ sender: NetService) {
-            logger.info("Bonjour: advertising \"\(sender.name)\" as \(LumeRecorderClient.bonjourServiceType) on port \(sender.port)")
+            logger.info("Bonjour: advertising \"\(sender.name)\" as \(StreamenRecorderClient.bonjourServiceType) on port \(sender.port)")
         }
 
         public func netService(_ sender: NetService, didNotPublish errorDict: [String: NSNumber]) {

@@ -1,5 +1,5 @@
 import Foundation
-import LumeRecorderKit
+import StreamenRecorderKit
 import Testing
 
 @Suite("normalizedBaseURL")
@@ -19,7 +19,7 @@ struct BaseURLTests {
         ("http://[fe80::1]", "http://[fe80::1]:8090"),
     ])
     func accepts(input: String, expected: String) {
-        #expect(LumeRecorderClient.normalizedBaseURL(from: input)?.absoluteString == expected)
+        #expect(StreamenRecorderClient.normalizedBaseURL(from: input)?.absoluteString == expected)
     }
 
     @Test(arguments: [
@@ -33,12 +33,12 @@ struct BaseURLTests {
         "://nas.local",
     ])
     func rejects(input: String) {
-        #expect(LumeRecorderClient.normalizedBaseURL(from: input) == nil)
+        #expect(StreamenRecorderClient.normalizedBaseURL(from: input) == nil)
     }
 
     @Test func constants() {
-        #expect(LumeRecorderClient.bonjourServiceType == "_lume-recorder._tcp")
-        #expect(LumeRecorderClient.defaultPort == 8090)
-        #expect(LumeRecorderClient.supportedAPIVersion == 1)
+        #expect(StreamenRecorderClient.bonjourServiceType == "_streamen-recorder._tcp")
+        #expect(StreamenRecorderClient.defaultPort == 8090)
+        #expect(StreamenRecorderClient.supportedAPIVersion == 1)
     }
 }

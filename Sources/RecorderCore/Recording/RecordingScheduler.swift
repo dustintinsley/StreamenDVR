@@ -1,6 +1,6 @@
 import Foundation
 import Logging
-import LumeRecorderKit
+import StreamenRecorderKit
 import ServiceLifecycle
 
 /// Domain errors the HTTP layer maps onto status codes.
@@ -102,7 +102,7 @@ public actor RecordingScheduler: Service {
         options: Options,
         disk: any DiskSpaceProviding = FileSystemDiskSpace(),
         now: @escaping NowProvider = { Date() },
-        logger: Logger = Logger(label: "lume-recorder.scheduler")
+        logger: Logger = Logger(label: "streamen-recorder.scheduler")
     ) {
         self.store = store
         self.launcher = launcher
@@ -213,7 +213,7 @@ public actor RecordingScheduler: Service {
             if let key = record.idempotencyKey, let deviceID { idempotencyIndex[Self.indexKey(deviceID, key)] = nil }
             throw error
         }
-        logger.info("Recording \(record.id) \"\(record.title)\" \(startsNow ? "starting now" : "scheduled for \(LumeRecorderCoding.formatDate(record.start))")")
+        logger.info("Recording \(record.id) \"\(record.title)\" \(startsNow ? "starting now" : "scheduled for \(StreamenRecorderCoding.formatDate(record.start))")")
         startJob(record.id, phase: startsNow ? .active : .waiting, resume: startsNow)
         return (record, true)
     }

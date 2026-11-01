@@ -1,5 +1,5 @@
 import Foundation
-import LumeRecorderKit
+import StreamenRecorderKit
 @testable import RecorderCore
 import Testing
 

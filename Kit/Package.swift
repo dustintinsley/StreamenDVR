@@ -1,12 +1,12 @@
 // swift-tools-version: 6.0
-// LumeRecorderKit — the shared wire contract (DTOs + coding) and a tiny async
-// client for the LumeRecorder HTTP API. Foundation only: the Lume app consumes
+// StreamenRecorderKit — the shared wire contract (DTOs + coding) and a tiny async
+// client for the StreamenRecorder HTTP API. Foundation only: the Streamen app consumes
 // this as a local package, so it must never add a dependency to the app graph.
 
 import PackageDescription
 
 let package = Package(
-    name: "LumeRecorderKit",
+    name: "StreamenRecorderKit",
     platforms: [
         .iOS(.v18),
         .macOS(.v15),
@@ -14,16 +14,16 @@ let package = Package(
         .visionOS(.v2),
     ],
     products: [
-        .library(name: "LumeRecorderKit", targets: ["LumeRecorderKit"]),
+        .library(name: "StreamenRecorderKit", targets: ["StreamenRecorderKit"]),
     ],
     targets: [
         .target(
-            name: "LumeRecorderKit",
+            name: "StreamenRecorderKit",
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
         .testTarget(
-            name: "LumeRecorderKitTests",
-            dependencies: ["LumeRecorderKit"],
+            name: "StreamenRecorderKitTests",
+            dependencies: ["StreamenRecorderKit"],
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
     ]

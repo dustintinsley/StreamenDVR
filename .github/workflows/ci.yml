@@ -37,7 +37,7 @@ jobs:
         working-directory: Kit
         run: |
           for platform in iOS tvOS visionOS; do
-            xcodebuild build -scheme LumeRecorderKit -destination "generic/platform=$platform" -quiet
+            xcodebuild build -scheme StreamenRecorderKit -destination "generic/platform=$platform" -quiet
           done
 
   # Pushes are signed with the Developer ID certificate when the secrets exist;
@@ -93,14 +93,14 @@ jobs:
             MacApp/.build/ffmpeg-*/ffmpeg
             MacApp/.build/ffmpeg-*/*.txt
           key: ffmpeg-${{ runner.os }}-${{ hashFiles('MacApp/scripts/build-ffmpeg.sh') }}
-      - name: Build LumeRecorder.app + DMG (universal)
+      - name: Build StreamenRecorder.app + DMG (universal)
         env:
           NOTARY_KEY_ID: ${{ secrets.NOTARY_KEY_ID }}
           NOTARY_ISSUER_ID: ${{ secrets.NOTARY_ISSUER_ID }}
         run: MacApp/scripts/build-app.sh
       - uses: actions/upload-artifact@v4
         with:
-          name: LumeRecorder-macOS
+          name: StreamenRecorder-macOS
           path: MacApp/dist/*.dmg
           if-no-files-found: error
       - name: Attach to GitHub release
@@ -110,10 +110,10 @@ jobs:
         run: |
           gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1 \
             || gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --generate-notes --verify-tag
-          # Plus a version-less copy, so releases/latest/download/LumeRecorder.dmg
+          # Plus a version-less copy, so releases/latest/download/StreamenRecorder.dmg
           # (linked from getlume.org/recorder) always serves the newest build.
-          cp MacApp/dist/LumeRecorder-*.dmg "$RUNNER_TEMP/LumeRecorder.dmg"
-          gh release upload "$GITHUB_REF_NAME" MacApp/dist/*.dmg "$RUNNER_TEMP/LumeRecorder.dmg" --clobber
+          cp MacApp/dist/StreamenRecorder-*.dmg "$RUNNER_TEMP/StreamenRecorder.dmg"
+          gh release upload "$GITHUB_REF_NAME" MacApp/dist/*.dmg "$RUNNER_TEMP/StreamenRecorder.dmg" --clobber
       - name: Remove signing material
         if: always()
         run: |

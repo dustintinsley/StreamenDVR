@@ -1,5 +1,5 @@
 import Foundation
-import LumeRecorderKit
+import StreamenRecorderKit
 @testable import RecorderCore
 import Testing
 
@@ -68,7 +68,7 @@ struct StoreTests {
         let names = try FileManager.default.contentsOfDirectory(atPath: dir.path)
         #expect(!names.contains { $0.hasSuffix(AtomicFile.tempSuffix) })
         let data = try Data(contentsOf: dir.appendingPathComponent("recordings.json"))
-        let decoded = try LumeRecorderCoding.makeDecoder().decode([RecordingRecord].self, from: data)
+        let decoded = try StreamenRecorderCoding.makeDecoder().decode([RecordingRecord].self, from: data)
         #expect(decoded.count == 25)
         let attributes = try FileManager.default.attributesOfItem(atPath: dir.appendingPathComponent("recordings.json").path)
         #expect((attributes[.posixPermissions] as? NSNumber)?.intValue == 0o600)

@@ -1,11 +1,11 @@
 services:
-  lume-recorder:
+  streamen-recorder:
     image: ghcr.io/bilipp/lumerecorder:latest
     # build: .            # or build locally from this checkout
-    container_name: lume-recorder
+    container_name: streamen-recorder
     restart: unless-stopped
-    # Host networking lets avahi advertise _lume-recorder._tcp on your LAN so
-    # Lume finds the server automatically (Linux hosts only).
+    # Host networking lets avahi advertise _streamen-recorder._tcp on your LAN so
+    # Streamen finds the server automatically (Linux hosts only).
     network_mode: host
     volumes:
       - ./data:/data
@@ -21,12 +21,12 @@ services:
       LOG_LEVEL: "info"
 
   # Bridge mode (Docker Desktop on macOS/Windows, or if you don't want host
-  # networking): Bonjour can't reach your LAN, so add the server in Lume
+  # networking): Bonjour can't reach your LAN, so add the server in Streamen
   # manually as <host-ip>:8090. Replace the service above with:
   #
-  # lume-recorder:
+  # streamen-recorder:
   #   image: ghcr.io/bilipp/lumerecorder:latest
-  #   container_name: lume-recorder
+  #   container_name: streamen-recorder
   #   restart: unless-stopped
   #   ports:
   #     - "8090:8090"
