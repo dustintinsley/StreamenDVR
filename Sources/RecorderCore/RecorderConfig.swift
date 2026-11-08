@@ -10,7 +10,7 @@ public enum RecorderVersion {
 public typealias NowProvider = @Sendable () -> Date
 
 /// Runtime configuration. Every field maps to an environment variable (and a
-/// matching CLI flag on `streamen-recorder serve`).
+/// matching CLI flag on `streamen-dvr serve`).
 public struct RecorderConfig: Sendable {
     /// `HOST` — bind address.
     public var host: String
@@ -93,9 +93,9 @@ public struct RecorderConfig: Sendable {
     /// The machine's short hostname (no domain suffix), never blocking on DNS.
     public static func defaultServerName() -> String {
         var buffer = [CChar](repeating: 0, count: 256)
-        guard gethostname(&buffer, buffer.count) == 0 else { return "StreamenRecorder" }
+        guard gethostname(&buffer, buffer.count) == 0 else { return "StreamenDVR" }
         let bytes = buffer.prefix { $0 != 0 }.map { UInt8(bitPattern: $0) }
         let name = String(decoding: bytes, as: UTF8.self).split(separator: ".").first.map(String.init) ?? ""
-        return name.isEmpty ? "StreamenRecorder" : name
+        return name.isEmpty ? "StreamenDVR" : name
     }
 }

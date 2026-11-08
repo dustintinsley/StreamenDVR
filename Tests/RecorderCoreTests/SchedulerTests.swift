@@ -1,5 +1,5 @@
 import Foundation
-import StreamenRecorderKit
+import StreamenDVRKit
 @testable import RecorderCore
 import Testing
 

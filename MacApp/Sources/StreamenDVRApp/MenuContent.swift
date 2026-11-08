@@ -39,7 +39,7 @@ struct MenuContent: View {
         HStack(alignment: .firstTextBaseline) {
             Circle().fill(statusColor).frame(width: 8, height: 8)
             VStack(alignment: .leading, spacing: 2) {
-                Text("StreamenRecorder").font(.headline)
+                Text("StreamenDVR").font(.headline)
                 Text("\(controller.config.serverName) · port \(String(controller.config.port))")
                     .font(.caption).foregroundStyle(.secondary)
             }
@@ -100,7 +100,7 @@ struct MenuContent: View {
         VStack(alignment: .leading, spacing: 4) {
             Label("ffmpeg not found", systemImage: "exclamationmark.triangle.fill")
                 .foregroundStyle(.orange)
-            Text("StreamenRecorder can't find the ffmpeg it ships with, so recordings fail. Download StreamenRecorder again and replace the app.")
+            Text("StreamenDVR can't find the ffmpeg it ships with, so recordings fail. Download StreamenDVR again and replace the app.")
                 .font(.caption).foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
         }
@@ -127,7 +127,7 @@ struct MenuContent: View {
             Button(controller.isRunning ? "Restart Recorder" : "Start Recorder") {
                 Task { await controller.restart() }
             }
-            Button("Quit StreamenRecorder") { quit() }
+            Button("Quit StreamenDVR") { quit() }
                 .keyboardShortcut("q")
         }
         .buttonStyle(.borderless)
@@ -144,7 +144,7 @@ struct MenuContent: View {
             NSApp.activate()
             let alert = NSAlert()
             alert.messageText = "Quit while recording?"
-            alert.informativeText = "Recordings in progress stop now and continue when StreamenRecorder opens again. Anything aired in between is missing."
+            alert.informativeText = "Recordings in progress stop now and continue when StreamenDVR opens again. Anything aired in between is missing."
             alert.addButton(withTitle: "Quit")
             alert.addButton(withTitle: "Cancel")
             guard alert.runModal() == .alertFirstButtonReturn else { return }

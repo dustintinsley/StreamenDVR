@@ -1,7 +1,7 @@
 import Foundation
 import Hummingbird
 import HummingbirdTesting
-import StreamenRecorderKit
+import StreamenDVRKit
 @testable import RecorderCore
 import Testing
 

@@ -1,6 +1,6 @@
 import Foundation
 import Hummingbird
-import StreamenRecorderKit
+import StreamenDVRKit
 
 /// An error rendered as `{"error":{"code":…,"message":…}}`.
 public struct APIError: HTTPResponseError, Sendable {
@@ -18,15 +18,15 @@ public struct APIError: HTTPResponseError, Sendable {
         try JSONResponse.make(ErrorResponse(code: code, message: message), status: status)
     }
 
-    public static let unauthorized = APIError(.unauthorized, code: StreamenRecorderErrorCode.unauthorized, message: "Missing or invalid bearer token.")
-    public static let pairingInvalid = APIError(.unauthorized, code: StreamenRecorderErrorCode.pairingInvalid, message: "The pairing code is wrong or has expired.")
-    public static let rateLimited = APIError(.tooManyRequests, code: StreamenRecorderErrorCode.rateLimited, message: "Too many failed pairing attempts. Try again in a minute.")
-    public static let notFound = APIError(.notFound, code: StreamenRecorderErrorCode.notFound, message: "Not found.")
-    public static let forbidden = APIError(.forbidden, code: StreamenRecorderErrorCode.forbidden, message: "Invalid or expired playback link.")
+    public static let unauthorized = APIError(.unauthorized, code: StreamenDVRErrorCode.unauthorized, message: "Missing or invalid bearer token.")
+    public static let pairingInvalid = APIError(.unauthorized, code: StreamenDVRErrorCode.pairingInvalid, message: "The pairing code is wrong or has expired.")
+    public static let rateLimited = APIError(.tooManyRequests, code: StreamenDVRErrorCode.rateLimited, message: "Too many failed pairing attempts. Try again in a minute.")
+    public static let notFound = APIError(.notFound, code: StreamenDVRErrorCode.notFound, message: "Not found.")
+    public static let forbidden = APIError(.forbidden, code: StreamenDVRErrorCode.forbidden, message: "Invalid or expired playback link.")
     public static let insufficientStorageStatus = HTTPResponse.Status(code: 507, reasonPhrase: "Insufficient Storage")
 
     public static func invalidRequest(_ message: String) -> APIError {
-        APIError(.badRequest, code: StreamenRecorderErrorCode.invalidRequest, message: message)
+        APIError(.badRequest, code: StreamenDVRErrorCode.invalidRequest, message: message)
     }
 
     /// Maps domain errors onto API errors.
@@ -37,18 +37,18 @@ public struct APIError: HTTPResponseError, Sendable {
         case .notFound:
             notFound
         case .concurrencyLimit:
-            APIError(.conflict, code: StreamenRecorderErrorCode.concurrencyLimit, message: "The maximum number of simultaneous recordings is already running.")
+            APIError(.conflict, code: StreamenDVRErrorCode.concurrencyLimit, message: "The maximum number of simultaneous recordings is already running.")
         case .insufficientStorage:
-            APIError(insufficientStorageStatus, code: StreamenRecorderErrorCode.insufficientStorage, message: "Not enough free disk space on the recorder.")
+            APIError(insufficientStorageStatus, code: StreamenDVRErrorCode.insufficientStorage, message: "Not enough free disk space on the recorder.")
         case .notPlayable:
-            APIError(.conflict, code: StreamenRecorderErrorCode.notPlayable, message: "This recording has no media to play yet.")
+            APIError(.conflict, code: StreamenDVRErrorCode.notPlayable, message: "This recording has no media to play yet.")
         }
     }
 }
 
 enum JSONResponse {
     static func make(_ value: some Encodable, status: HTTPResponse.Status = .ok) throws -> Response {
-        let data = try StreamenRecorderCoding.makeEncoder().encode(value)
+        let data = try StreamenDVRCoding.makeEncoder().encode(value)
         var headers = HTTPFields()
         headers[.contentType] = "application/json; charset=utf-8"
         headers[.cacheControl] = "no-store"
@@ -68,10 +68,10 @@ struct ErrorMiddleware<Context: RequestContext>: RouterMiddleware {
             return try APIError.from(error).response(from: request, context: context)
         } catch let error as HTTPError {
             let code = switch error.status.code {
-            case 400, 413: StreamenRecorderErrorCode.invalidRequest
-            case 401: StreamenRecorderErrorCode.unauthorized
-            case 403: StreamenRecorderErrorCode.forbidden
-            case 404: StreamenRecorderErrorCode.notFound
+            case 400, 413: StreamenDVRErrorCode.invalidRequest
+            case 401: StreamenDVRErrorCode.unauthorized
+            case 403: StreamenDVRErrorCode.forbidden
+            case 404: StreamenDVRErrorCode.notFound
             case 405: "method_not_allowed"
             default: "http_\(error.status.code)"
             }
@@ -79,7 +79,7 @@ struct ErrorMiddleware<Context: RequestContext>: RouterMiddleware {
             return try APIError(error.status, code: code, message: message).response(from: request, context: context)
         } catch {
             context.logger.error("Unhandled error: \(String(reflecting: type(of: error)))")
-            return try APIError(.internalServerError, code: StreamenRecorderErrorCode.internalError, message: "Internal server error.")
+            return try APIError(.internalServerError, code: StreamenDVRErrorCode.internalError, message: "Internal server error.")
                 .response(from: request, context: context)
         }
     }

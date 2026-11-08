@@ -56,7 +56,7 @@ struct PairingTests {
             #expect(await pairing.verify(first.code) == .invalid)
         }
         #expect(await pairing.verify(second.code) == .accepted)
-        // The file `streamen-recorder pair` reads follows the rotation.
+        // The file `streamen-dvr pair` reads follows the rotation.
         #expect(PairingCodeFile.read(from: dir)?.code == second.code)
     }
 

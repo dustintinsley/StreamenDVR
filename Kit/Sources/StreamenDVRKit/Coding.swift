@@ -6,7 +6,7 @@ import Foundation
 /// Dates are ISO-8601 in UTC with fractional seconds on encode
 /// (`2026-10-03T18:30:00.000Z`); decoding accepts them with or without
 /// fractional seconds.
-public enum StreamenRecorderCoding {
+public enum StreamenDVRCoding {
     public static func makeEncoder() -> JSONEncoder {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .custom { date, encoder in

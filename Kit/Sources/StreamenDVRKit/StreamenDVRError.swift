@@ -3,8 +3,8 @@ import Foundation
     import FoundationNetworking
 #endif
 
-/// Every failure `StreamenRecorderClient` can throw.
-public enum StreamenRecorderError: Error, Sendable {
+/// Every failure `StreamenDVRClient` can throw.
+public enum StreamenDVRError: Error, Sendable {
     /// 401 — missing/revoked token, or (from `pair`) a wrong or expired code.
     case unauthorized
     /// 404 — the recording or device no longer exists.
@@ -27,7 +27,7 @@ public enum StreamenRecorderError: Error, Sendable {
     case unsupportedAPIVersion(Int)
 }
 
-extension StreamenRecorderError: LocalizedError {
+extension StreamenDVRError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .unauthorized:
@@ -54,8 +54,8 @@ extension StreamenRecorderError: LocalizedError {
     }
 }
 
-extension StreamenRecorderError: Equatable {
-    public static func == (lhs: StreamenRecorderError, rhs: StreamenRecorderError) -> Bool {
+extension StreamenDVRError: Equatable {
+    public static func == (lhs: StreamenDVRError, rhs: StreamenDVRError) -> Bool {
         switch (lhs, rhs) {
         case (.unauthorized, .unauthorized), (.notFound, .notFound),
              (.rateLimited, .rateLimited), (.insufficientStorage, .insufficientStorage):

@@ -1,12 +1,12 @@
 // swift-tools-version: 6.0
-// StreamenRecorderKit — the shared wire contract (DTOs + coding) and a tiny async
-// client for the StreamenRecorder HTTP API. Foundation only: the Streamen app consumes
+// StreamenDVRKit — the shared wire contract (DTOs + coding) and a tiny async
+// client for the StreamenDVR HTTP API. Foundation only: the Streamen app consumes
 // this as a local package, so it must never add a dependency to the app graph.
 
 import PackageDescription
 
 let package = Package(
-    name: "StreamenRecorderKit",
+    name: "StreamenDVRKit",
     platforms: [
         .iOS(.v18),
         .macOS(.v15),
@@ -14,16 +14,16 @@ let package = Package(
         .visionOS(.v2),
     ],
     products: [
-        .library(name: "StreamenRecorderKit", targets: ["StreamenRecorderKit"]),
+        .library(name: "StreamenDVRKit", targets: ["StreamenDVRKit"]),
     ],
     targets: [
         .target(
-            name: "StreamenRecorderKit",
+            name: "StreamenDVRKit",
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
         .testTarget(
-            name: "StreamenRecorderKitTests",
-            dependencies: ["StreamenRecorderKit"],
+            name: "StreamenDVRKitTests",
+            dependencies: ["StreamenDVRKit"],
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
     ]

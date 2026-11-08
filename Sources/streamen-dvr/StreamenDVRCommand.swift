@@ -4,9 +4,9 @@ import Logging
 import RecorderCore
 
 @main
-struct StreamenRecorderCommand: AsyncParsableCommand {
+struct StreamenDVRCommand: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
-        commandName: "streamen-recorder",
+        commandName: "streamen-dvr",
         abstract: "Self-hosted DVR recording server for the Streamen IPTV app.",
         version: RecorderVersion.current,
         subcommands: [Serve.self, Pair.self, ServerID.self],
@@ -59,14 +59,14 @@ struct Serve: AsyncParsableCommand {
             handler.logLevel = level
             return handler
         }
-        var logger = Logger(label: "streamen-recorder")
+        var logger = Logger(label: "streamen-dvr")
         logger.logLevel = level
         try await RecorderServer.run(config: config, logger: logger)
     }
 }
 
 /// Prints the current pairing code from `DATA_DIR/pairing-code.json`, so
-/// `docker exec streamen-recorder streamen-recorder pair` works.
+/// `docker exec streamen-dvr streamen-dvr pair` works.
 struct Pair: ParsableCommand {
     static let configuration = CommandConfiguration(abstract: "Print the current pairing code of a running server.")
 

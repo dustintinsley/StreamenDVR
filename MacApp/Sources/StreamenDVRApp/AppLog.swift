@@ -1,11 +1,11 @@
 import Foundation
 import Logging
 
-/// Appends log lines to `~/Library/Logs/StreamenRecorder/streamen-recorder.log`, which
+/// Appends log lines to `~/Library/Logs/StreamenDVR/streamen-dvr.log`, which
 /// the menu opens in Console. RecorderCore redacts stream URLs before logging.
 struct FileLogHandler: LogHandler {
     static let fileURL = FileManager.default.homeDirectoryForCurrentUser
-        .appendingPathComponent("Library/Logs/StreamenRecorder/streamen-recorder.log")
+        .appendingPathComponent("Library/Logs/StreamenDVR/streamen-dvr.log")
 
     private static let sink = LogFileSink(url: fileURL)
 

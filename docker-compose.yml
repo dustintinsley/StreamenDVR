@@ -1,10 +1,10 @@
 services:
-  streamen-recorder:
+  streamen-dvr:
     image: ghcr.io/bilipp/lumerecorder:latest
     # build: .            # or build locally from this checkout
-    container_name: streamen-recorder
+    container_name: streamen-dvr
     restart: unless-stopped
-    # Host networking lets avahi advertise _streamen-recorder._tcp on your LAN so
+    # Host networking lets avahi advertise _streamen-dvr._tcp on your LAN so
     # Streamen finds the server automatically (Linux hosts only).
     network_mode: host
     volumes:
@@ -24,9 +24,9 @@ services:
   # networking): Bonjour can't reach your LAN, so add the server in Streamen
   # manually as <host-ip>:8090. Replace the service above with:
   #
-  # streamen-recorder:
+  # streamen-dvr:
   #   image: ghcr.io/bilipp/lumerecorder:latest
-  #   container_name: streamen-recorder
+  #   container_name: streamen-dvr
   #   restart: unless-stopped
   #   ports:
   #     - "8090:8090"

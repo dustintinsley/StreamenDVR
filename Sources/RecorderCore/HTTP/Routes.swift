@@ -1,7 +1,7 @@
 import Foundation
 import HTTPTypes
 import Hummingbird
-import StreamenRecorderKit
+import StreamenDVRKit
 
 /// Per-request context: the authenticated device (if any) plus the shared
 /// wire coders so request/response formats match the Kit exactly.
@@ -14,8 +14,8 @@ public struct RecorderRequestContext: RequestContext {
         device = nil
     }
 
-    public var requestDecoder: JSONDecoder { StreamenRecorderCoding.makeDecoder() }
-    public var responseEncoder: JSONEncoder { StreamenRecorderCoding.makeEncoder() }
+    public var requestDecoder: JSONDecoder { StreamenDVRCoding.makeDecoder() }
+    public var responseEncoder: JSONEncoder { StreamenDVRCoding.makeEncoder() }
     public var maxUploadSize: Int { 256 * 1024 }
 }
 
@@ -44,7 +44,7 @@ struct BearerAuthMiddleware: RouterMiddleware {
 
 /// Builds the router for the v1 API and the signed playback routes.
 public enum RecorderRoutes {
-    static let idempotencyHeader = HTTPField.Name(StreamenRecorderAPI.idempotencyKeyHeader)!
+    static let idempotencyHeader = HTTPField.Name(StreamenDVRAPI.idempotencyKeyHeader)!
     static let hostHeader = HTTPField.Name("Host")!
     static let forwardedProtoHeader = HTTPField.Name("X-Forwarded-Proto")!
 

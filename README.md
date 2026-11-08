@@ -1,7 +1,7 @@
-# StreamenRecorder
+# StreamenDVR
 
 A small, self-hosted DVR server for the [Streamen](https://github.com/bilipp/Lume)
-IPTV app. Streamen schedules a recording ("record this programme"); StreamenRecorder
+IPTV app. Streamen schedules a recording ("record this programme"); StreamenDVR
 runs on an always-on machine (NAS, mini PC, Raspberry Pi, Mac) and records the
 stream with ffmpeg to HLS on disk, even when every Apple device is asleep.
 Finished and in-progress recordings play back in Streamen over short-lived signed
@@ -11,27 +11,27 @@ links.
 - Automatic retries with `#EXT-X-DISCONTINUITY` when the source drops.
 - Survives restarts: running recordings resume, missed ones are marked.
 - Pairing with a 6-digit code, per-device bearer tokens (stored hashed).
-- Bonjour discovery (`_streamen-recorder._tcp`), JSON HTTP API, no database.
+- Bonjour discovery (`_streamen-dvr._tcp`), JSON HTTP API, no database.
 
 > **Your responsibility:** only record content you are entitled to record and
-> keep. StreamenRecorder ships no channels or streams. It records what your Streamen
+> keep. StreamenDVR ships no channels or streams. It records what your Streamen
 > app points it at, using your provider credentials, for your private use.
 
 ## Mac app (no Docker)
 
-On a Mac you can run StreamenRecorder as a menu-bar app instead of a container:
+On a Mac you can run StreamenDVR as a menu-bar app instead of a container:
 
-1. Download `StreamenRecorder-<version>.dmg` from the
+1. Download `StreamenDVR-<version>.dmg` from the
    [latest release](https://github.com/bilipp/LumeRecorder/releases/latest),
-   open it, and drag StreamenRecorder into Applications.
+   open it, and drag StreamenDVR into Applications.
 2. Open the app. A record icon appears in the menu bar. Click it to see the
    pairing code, recording status and paired devices.
 
 ffmpeg is built in, so there's nothing else to install. The app registers itself to open at login (toggle it in the menu), keeps the
 Mac from idle-sleeping while recordings are running or scheduled, and stops
 ffmpeg cleanly when you quit. Data lives in
-`~/Library/Application Support/StreamenRecorder`, the log in
-`~/Library/Logs/StreamenRecorder/streamen-recorder.log`. The environment variables
+`~/Library/Application Support/StreamenDVR`, the log in
+`~/Library/Logs/StreamenDVR/streamen-dvr.log`. The environment variables
 from [Configuration](#configuration) still apply. A Mac whose lid is closed
 (without an external display) still sleeps and misses recordings.
 
@@ -40,9 +40,9 @@ from [Configuration](#configuration) still apply. A Mac whose lid is closed
 ```yaml
 # docker-compose.yml
 services:
-  streamen-recorder:
+  streamen-dvr:
     image: ghcr.io/bilipp/lumerecorder:latest
-    container_name: streamen-recorder
+    container_name: streamen-dvr
     restart: unless-stopped
     network_mode: host          # needed for Bonjour discovery
     volumes:
@@ -51,18 +51,18 @@ services:
 
 ```bash
 docker compose up -d
-docker logs streamen-recorder | grep "Pairing code"
+docker logs streamen-dvr | grep "Pairing code"
 ```
 
-Or build from this checkout: `docker build -t streamenrecorder .`
+Or build from this checkout: `docker build -t streamendvr .`
 
 ### docker run
 
 ```bash
-docker build -t streamenrecorder .
-docker run -d --name streamen-recorder --restart unless-stopped \
-  --network host -v "$PWD/data:/data" streamenrecorder
-docker exec streamen-recorder streamen-recorder pair
+docker build -t streamendvr .
+docker run -d --name streamen-dvr --restart unless-stopped \
+  --network host -v "$PWD/data:/data" streamendvr
+docker exec streamen-dvr streamen-dvr pair
 ```
 
 On Docker Desktop (macOS/Windows) host networking can't carry Bonjour: publish
@@ -73,12 +73,12 @@ address.
 
 ```bash
 container system start
-container build -t streamenrecorder:dev .
-mkdir -p ~/StreamenRecorder-data
-container run -d --name streamen-recorder \
-  -p 0.0.0.0:8090:8090 -v ~/StreamenRecorder-data:/data \
-  -e BONJOUR=0 streamenrecorder:dev
-container exec streamen-recorder streamen-recorder pair
+container build -t streamendvr:dev .
+mkdir -p ~/StreamenDVR-data
+container run -d --name streamen-dvr \
+  -p 0.0.0.0:8090:8090 -v ~/StreamenDVR-data:/data \
+  -e BONJOUR=0 streamendvr:dev
+container exec streamen-dvr streamen-dvr pair
 ```
 
 The container runs in a VM, so Bonjour doesn't reach your network: in Streamen use
@@ -95,7 +95,7 @@ only root can write there, as root, and says so in the log.
 Needs Swift 6 and ffmpeg (`brew install ffmpeg` / `apt install ffmpeg`):
 
 ```bash
-swift run -c release streamen-recorder --data-dir ./data
+swift run -c release streamen-dvr --data-dir ./data
 ```
 
 On macOS this also advertises the server via Bonjour, so the iOS Simulator and
@@ -106,7 +106,7 @@ devices on your LAN discover it.
 1. Start the server. It logs a code, and logs a new one every 10 minutes:
    `Pairing code: 123 456 (valid 10 min)`
 2. Print the current code at any time:
-   `docker exec streamen-recorder streamen-recorder pair` (or `streamen-recorder pair --data-dir ./data`).
+   `docker exec streamen-dvr streamen-dvr pair` (or `streamen-dvr pair --data-dir ./data`).
    The Mac app shows it in its menu.
 3. In Streamen, pick the discovered server (or enter `host:port`) and type the code.
 
@@ -116,7 +116,7 @@ minute (`429`). Devices can be listed and unpaired from Streamen.
 
 ## Configuration
 
-Every variable also has a CLI flag on `streamen-recorder serve` (e.g. `--port`,
+Every variable also has a CLI flag on `streamen-dvr serve` (e.g. `--port`,
 `--data-dir`, `--max-concurrent`); a flag wins over its variable.
 
 | Variable | Default | Meaning |
@@ -141,7 +141,7 @@ DATA_DIR/
 ├── server.json          server id + playback-signing secret (keep private)
 ├── recordings.json      recording records, including stream URLs (keep private)
 ├── devices.json         paired devices (SHA-256 token hashes only)
-├── pairing-code.json    current pairing code (read by `streamen-recorder pair`)
+├── pairing-code.json    current pairing code (read by `streamen-dvr pair`)
 └── recordings/<id>/     index.m3u8 + a<attempt>_<n>.ts segments
                          (finished, with SINGLE_FILE_RECORDINGS: index.m3u8 + recording.ts)
 ```
@@ -150,7 +150,7 @@ Files are written atomically and readable only by the server user (`0600`).
 
 ## Bonjour / discovery
 
-The server advertises `_streamen-recorder._tcp` with TXT records `id=<server id>`,
+The server advertises `_streamen-dvr._tcp` with TXT records `id=<server id>`,
 `version=<version>`, `api=1`.
 
 - **macOS (`swift run`)**: advertised with `NetService`.
@@ -160,8 +160,8 @@ The server advertises `_streamen-recorder._tcp` with TXT records `id=<server id>
   doesn't leave the container. Set `BONJOUR=0` and enter `host:8090` in Streamen.
 - **The host already runs avahi-daemon** (common on NAS systems): two mDNS
   responders on one host fight over the hostname. Set `BONJOUR=0` and put this
-  file in the host's `/etc/avahi/services/streamen-recorder.service`, with the id from
-  `docker exec streamen-recorder streamen-recorder server-id`:
+  file in the host's `/etc/avahi/services/streamen-dvr.service`, with the id from
+  `docker exec streamen-dvr streamen-dvr server-id`:
 
   ```xml
   <?xml version="1.0" standalone='no'?>
@@ -169,7 +169,7 @@ The server advertises `_streamen-recorder._tcp` with TXT records `id=<server id>
   <service-group>
     <name replace-wildcards="yes">%h</name>
     <service>
-      <type>_streamen-recorder._tcp</type>
+      <type>_streamen-dvr._tcp</type>
       <port>8090</port>
       <txt-record>id=PASTE-SERVER-ID</txt-record>
       <txt-record>version=0.3.1</txt-record>
@@ -182,7 +182,7 @@ The server advertises `_streamen-recorder._tcp` with TXT records `id=<server id>
 
 All JSON; dates are ISO-8601 UTC (fractional seconds optional on input).
 Errors always look like `{"error":{"code":"snake_case","message":"…"}}`.
-Swift clients should use `StreamenRecorderKit` (in `Kit/`), which wraps all of this.
+Swift clients should use `StreamenDVRKit` (in `Kit/`), which wraps all of this.
 
 | Method & path | Auth | Purpose |
 |---------------|------|---------|
@@ -249,7 +249,7 @@ headers.
 swift build && swift test           # server (Swift Testing + HummingbirdTesting)
 (cd Kit && swift test)              # client kit
 (cd MacApp && swift build)          # macOS menu-bar app
-MacApp/scripts/build-app.sh         # StreamenRecorder.app + DMG in MacApp/dist/
+MacApp/scripts/build-app.sh         # StreamenDVR.app + DMG in MacApp/dist/
 ```
 
 `build-app.sh` bundles an LGPL ffmpeg built from the official source release
@@ -265,7 +265,7 @@ use).
 
 The `macOS app` job signs every push to `main` with a Developer ID
 certificate. On a `v*` tag it also notarizes the app and attaches
-`StreamenRecorder-<version>.dmg` to the GitHub release. A release tag fails
+`StreamenDVR-<version>.dmg` to the GitHub release. A release tag fails
 without these repository secrets, and PRs build ad-hoc signed:
 
 | Secret | Value |

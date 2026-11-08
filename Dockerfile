@@ -7,7 +7,7 @@ WORKDIR /build
 # Resolve dependencies first so source edits don't invalidate this layer.
 COPY Package.swift Package.resolved ./
 COPY Kit/Package.swift Kit/Package.swift
-RUN mkdir -p Kit/Sources/StreamenRecorderKit Kit/Tests/StreamenRecorderKitTests \
+RUN mkdir -p Kit/Sources/StreamenDVRKit Kit/Tests/StreamenDVRKitTests \
     && swift package resolve
 
 COPY Kit Kit
@@ -15,12 +15,12 @@ COPY Sources Sources
 COPY Tests Tests
 # `--build-system native`: with Swift 6.4's default swiftbuild backend, a
 # --static-swift-stdlib link misses FoundationNetworking's CFURLSessionInterface
-# and libcurl dependencies (pulled in via StreamenRecorderKit's URLSession client).
+# and libcurl dependencies (pulled in via StreamenDVRKit's URLSession client).
 ARG SWIFT_BUILD_FLAGS="-c release --static-swift-stdlib --build-system native"
-RUN swift build ${SWIFT_BUILD_FLAGS} --product streamen-recorder \
+RUN swift build ${SWIFT_BUILD_FLAGS} --product streamen-dvr \
     && mkdir -p /staging \
-    && cp "$(swift build ${SWIFT_BUILD_FLAGS} --show-bin-path)/streamen-recorder" /staging/ \
-    && ldd /staging/streamen-recorder
+    && cp "$(swift build ${SWIFT_BUILD_FLAGS} --show-bin-path)/streamen-dvr" /staging/ \
+    && ldd /staging/streamen-dvr
 
 # ---- Runtime -----------------------------------------------------------------
 FROM ubuntu:24.04
@@ -36,9 +36,9 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && useradd --system --uid 10001 --user-group --home-dir /data --no-create-home --shell /usr/sbin/nologin streamen \
     && mkdir -p /data && chown streamen:streamen /data
 
-COPY --from=build /staging/streamen-recorder /usr/local/bin/streamen-recorder
+COPY --from=build /staging/streamen-dvr /usr/local/bin/streamen-dvr
 COPY docker/entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-RUN chmod 0755 /usr/local/bin/docker-entrypoint.sh /usr/local/bin/streamen-recorder
+RUN chmod 0755 /usr/local/bin/docker-entrypoint.sh /usr/local/bin/streamen-dvr
 
 ENV DATA_DIR=/data \
     PORT=8090 \

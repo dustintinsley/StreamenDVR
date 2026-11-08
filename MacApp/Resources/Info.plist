@@ -5,9 +5,9 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>StreamenRecorder</string>
+	<string>StreamenDVR</string>
 	<key>CFBundleExecutable</key>
-	<string>StreamenRecorder</string>
+	<string>StreamenDVR</string>
 	<key>CFBundleIconFile</key>
 	<string>AppIcon</string>
 	<key>CFBundleIconName</key>
@@ -17,7 +17,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>StreamenRecorder</string>
+	<string>StreamenDVR</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -32,11 +32,11 @@
 	<true/>
 	<key>NSBonjourServices</key>
 	<array>
-		<string>_streamen-recorder._tcp</string>
+		<string>_streamen-dvr._tcp</string>
 	</array>
 	<key>NSHumanReadableCopyright</key>
 	<string>Licensed under the GNU AGPL v3.</string>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>StreamenRecorder announces itself on your local network so the Streamen app can find it, and records streams from your provider.</string>
+	<string>StreamenDVR announces itself on your local network so the Streamen app can find it, and records streams from your provider.</string>
 </dict>
 </plist>

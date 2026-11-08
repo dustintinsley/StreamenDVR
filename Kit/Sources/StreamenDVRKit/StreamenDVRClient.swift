@@ -3,20 +3,20 @@ import Foundation
     import FoundationNetworking
 #endif
 
-/// Async client for a StreamenRecorder server.
+/// Async client for a StreamenDVR server.
 ///
 /// Stateless and `Sendable`: create one per server (and per token) and share
 /// it freely. The client never retries — in particular it never re-sends a
 /// `POST` or `DELETE`; pass an `idempotencyKey` to `createRecording` and retry
 /// yourself if you need at-least-once semantics. The token only ever travels
 /// in the `Authorization` header, never in a URL.
-public final class StreamenRecorderClient: Sendable {
+public final class StreamenDVRClient: Sendable {
     /// Bonjour/DNS-SD service type the server advertises.
-    public static let bonjourServiceType = "_streamen-recorder._tcp"
+    public static let bonjourServiceType = "_streamen-dvr._tcp"
     /// Port the server listens on by default.
     public static let defaultPort = 8090
     /// The API version this client implements.
-    public static let supportedAPIVersion = StreamenRecorderAPI.version
+    public static let supportedAPIVersion = StreamenDVRAPI.version
 
     public let baseURL: URL
     public let token: String?
@@ -29,8 +29,8 @@ public final class StreamenRecorderClient: Sendable {
     }
 
     /// A copy of this client that authenticates with `token`.
-    public func withToken(_ token: String?) -> StreamenRecorderClient {
-        StreamenRecorderClient(baseURL: baseURL, token: token, session: session)
+    public func withToken(_ token: String?) -> StreamenDVRClient {
+        StreamenDVRClient(baseURL: baseURL, token: token, session: session)
     }
 
     // MARK: - Unauthenticated
@@ -67,7 +67,7 @@ public final class StreamenRecorderClient: Sendable {
     ) async throws -> Recording {
         var headers: [String: String] = [:]
         if let idempotencyKey {
-            headers[StreamenRecorderAPI.idempotencyKeyHeader] = idempotencyKey
+            headers[StreamenDVRAPI.idempotencyKeyHeader] = idempotencyKey
         }
         return try await send("POST", "recordings", body: Self.encode(request), headers: headers)
     }
@@ -144,15 +144,15 @@ public final class StreamenRecorderClient: Sendable {
 
     private static func checkAPIVersion(_ version: Int) throws {
         guard version == supportedAPIVersion else {
-            throw StreamenRecorderError.unsupportedAPIVersion(version)
+            throw StreamenDVRError.unsupportedAPIVersion(version)
         }
     }
 
     private static func encode(_ value: some Encodable) throws -> Data {
         do {
-            return try StreamenRecorderCoding.makeEncoder().encode(value)
+            return try StreamenDVRCoding.makeEncoder().encode(value)
         } catch {
-            throw StreamenRecorderError.invalidRequest("Couldn't encode the request: \(error)")
+            throw StreamenDVRError.invalidRequest("Couldn't encode the request: \(error)")
         }
     }
 
@@ -164,9 +164,9 @@ public final class StreamenRecorderClient: Sendable {
     ) async throws -> Response {
         let data = try await perform(method, path, body: body, headers: headers)
         do {
-            return try StreamenRecorderCoding.makeDecoder().decode(Response.self, from: data)
+            return try StreamenDVRCoding.makeDecoder().decode(Response.self, from: data)
         } catch {
-            throw StreamenRecorderError.decoding(String(describing: error))
+            throw StreamenDVRError.decoding(String(describing: error))
         }
     }
 
@@ -200,18 +200,18 @@ public final class StreamenRecorderClient: Sendable {
         do {
             (data, response) = try await session.streamenData(for: request)
         } catch let error as URLError {
-            throw StreamenRecorderError.transport(error)
+            throw StreamenDVRError.transport(error)
         }
 
         guard let http = response as? HTTPURLResponse else {
-            throw StreamenRecorderError.decoding("Not an HTTP response")
+            throw StreamenDVRError.decoding("Not an HTTP response")
         }
         guard !(200 ..< 300).contains(http.statusCode) else { return data }
         throw Self.error(status: http.statusCode, body: data)
     }
 
-    static func error(status: Int, body: Data) -> StreamenRecorderError {
-        let payload = try? StreamenRecorderCoding.makeDecoder().decode(ErrorResponse.self, from: body)
+    static func error(status: Int, body: Data) -> StreamenDVRError {
+        let payload = try? StreamenDVRCoding.makeDecoder().decode(ErrorResponse.self, from: body)
         let code = payload?.error.code
         let message = payload?.error.message
         switch status {

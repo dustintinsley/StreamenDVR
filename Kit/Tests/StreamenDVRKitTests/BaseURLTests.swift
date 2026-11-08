@@ -1,5 +1,5 @@
 import Foundation
-import StreamenRecorderKit
+import StreamenDVRKit
 import Testing
 
 @Suite("normalizedBaseURL")
@@ -19,7 +19,7 @@ struct BaseURLTests {
         ("http://[fe80::1]", "http://[fe80::1]:8090"),
     ])
     func accepts(input: String, expected: String) {
-        #expect(StreamenRecorderClient.normalizedBaseURL(from: input)?.absoluteString == expected)
+        #expect(StreamenDVRClient.normalizedBaseURL(from: input)?.absoluteString == expected)
     }
 
     @Test(arguments: [
@@ -33,12 +33,12 @@ struct BaseURLTests {
         "://nas.local",
     ])
     func rejects(input: String) {
-        #expect(StreamenRecorderClient.normalizedBaseURL(from: input) == nil)
+        #expect(StreamenDVRClient.normalizedBaseURL(from: input) == nil)
     }
 
     @Test func constants() {
-        #expect(StreamenRecorderClient.bonjourServiceType == "_streamen-recorder._tcp")
-        #expect(StreamenRecorderClient.defaultPort == 8090)
-        #expect(StreamenRecorderClient.supportedAPIVersion == 1)
+        #expect(StreamenDVRClient.bonjourServiceType == "_streamen-dvr._tcp")
+        #expect(StreamenDVRClient.defaultPort == 8090)
+        #expect(StreamenDVRClient.supportedAPIVersion == 1)
     }
 }

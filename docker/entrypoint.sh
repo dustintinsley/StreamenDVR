@@ -1,14 +1,14 @@
 #!/bin/sh
-# StreamenRecorder container entrypoint.
+# StreamenDVR container entrypoint.
 #
-# As root: fix /data ownership, advertise _streamen-recorder._tcp via avahi (needs
+# As root: fix /data ownership, advertise _streamen-dvr._tcp via avahi (needs
 # `network_mode: host` to be useful), then drop to the unprivileged `streamen`
 # user. Started with `--user`, it skips avahi and runs the server directly.
 set -eu
 
 PORT="${PORT:-8090}"
 DATA_DIR="${DATA_DIR:-/data}"
-BIN=/usr/local/bin/streamen-recorder
+BIN=/usr/local/bin/streamen-dvr
 
 bonjour_enabled() {
     case "$(echo "${BONJOUR:-1}" | tr '[:upper:]' '[:lower:]')" in
@@ -30,13 +30,13 @@ start_avahi() {
         name="%h"
     fi
     mkdir -p /etc/avahi/services /run/avahi-daemon
-    cat > /etc/avahi/services/streamen-recorder.service <<EOF
+    cat > /etc/avahi/services/streamen-dvr.service <<EOF
 <?xml version="1.0" standalone='no'?>
 <!DOCTYPE service-group SYSTEM "avahi-service.dtd">
 <service-group>
   <name replace-wildcards="yes">${name}</name>
   <service>
-    <type>_streamen-recorder._tcp</type>
+    <type>_streamen-dvr._tcp</type>
     <port>${PORT}</port>
     <txt-record>id=${server_id}</txt-record>
     <txt-record>version=${version}</txt-record>
@@ -46,7 +46,7 @@ start_avahi() {
 EOF
     rm -f /run/avahi-daemon/pid
     if avahi-daemon --daemonize --no-chroot; then
-        echo "Bonjour: advertising _streamen-recorder._tcp on port ${PORT} via avahi"
+        echo "Bonjour: advertising _streamen-dvr._tcp on port ${PORT} via avahi"
     else
         echo "Bonjour: avahi-daemon failed to start; add the server manually by host:port" >&2
     fi

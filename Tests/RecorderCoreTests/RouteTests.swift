@@ -2,7 +2,7 @@ import Foundation
 import HTTPTypes
 import Hummingbird
 import HummingbirdTesting
-import StreamenRecorderKit
+import StreamenDVRKit
 @testable import RecorderCore
 import Testing
 
@@ -53,11 +53,11 @@ struct APIHarness {
     }
 
     static func body(_ value: some Encodable) -> ByteBuffer {
-        ByteBuffer(bytes: try! StreamenRecorderCoding.makeEncoder().encode(value))
+        ByteBuffer(bytes: try! StreamenDVRCoding.makeEncoder().encode(value))
     }
 
     static func decode<T: Decodable>(_ type: T.Type, _ response: TestResponse) throws -> T {
-        try StreamenRecorderCoding.makeDecoder().decode(T.self, from: Data(response.body.readableBytesView))
+        try StreamenDVRCoding.makeDecoder().decode(T.self, from: Data(response.body.readableBytesView))
     }
 
     static func errorCode(_ response: TestResponse) -> String? {

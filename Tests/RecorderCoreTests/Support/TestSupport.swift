@@ -6,7 +6,7 @@ import Foundation
 func makeTempDirectory(_ label: String = #function) -> URL {
     let safe = label.filter { $0.isLetter || $0.isNumber }
     let url = FileManager.default.temporaryDirectory
-        .appendingPathComponent("streamen-recorder-tests", isDirectory: true)
+        .appendingPathComponent("streamen-dvr-tests", isDirectory: true)
         .appendingPathComponent("\(safe)-\(UUID().uuidString.prefix(8))", isDirectory: true)
     try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
     return url

@@ -1,12 +1,12 @@
 import Foundation
-@testable import StreamenRecorderKit
+@testable import StreamenDVRKit
 import Testing
 
 @Suite("Wire coding")
 struct CodingTests {
     private func roundTrip<T: Codable & Equatable>(_ value: T) throws -> T {
-        let data = try StreamenRecorderCoding.makeEncoder().encode(value)
-        return try StreamenRecorderCoding.makeDecoder().decode(T.self, from: data)
+        let data = try StreamenDVRCoding.makeEncoder().encode(value)
+        return try StreamenDVRCoding.makeDecoder().decode(T.self, from: data)
     }
 
     private let referenceDate = Date(timeIntervalSince1970: 1_790_000_000.25)
@@ -57,7 +57,7 @@ struct CodingTests {
     }
 
     @Test func errorResponseShape() throws {
-        let data = try StreamenRecorderCoding.makeEncoder().encode(ErrorResponse(code: "unauthorized", message: "nope"))
+        let data = try StreamenDVRCoding.makeEncoder().encode(ErrorResponse(code: "unauthorized", message: "nope"))
         let json = try #require(String(data: data, encoding: .utf8))
         #expect(json == #"{"error":{"code":"unauthorized","message":"nope"}}"#)
     }
@@ -72,9 +72,9 @@ struct CodingTests {
     ])
     func statusDecodesAndRoundTrips(raw: String, expected: RecordingStatus) throws {
         let data = Data("\"\(raw)\"".utf8)
-        let decoded = try StreamenRecorderCoding.makeDecoder().decode(RecordingStatus.self, from: data)
+        let decoded = try StreamenDVRCoding.makeDecoder().decode(RecordingStatus.self, from: data)
         #expect(decoded == expected)
-        let reencoded = try StreamenRecorderCoding.makeEncoder().encode(decoded)
+        let reencoded = try StreamenDVRCoding.makeEncoder().encode(decoded)
         #expect(String(data: reencoded, encoding: .utf8) == "\"\(raw)\"")
     }
 
@@ -83,7 +83,7 @@ struct CodingTests {
         {"id":"6F9619FF-8B86-D011-B42D-00C04FC964FF","title":"x","start":"2026-10-03T18:00:00Z",
          "end":"2026-10-03T19:00:00.5Z","status":"archived","createdAt":"2026-10-03T17:00:00.123Z"}
         """
-        let recording = try StreamenRecorderCoding.makeDecoder().decode(Recording.self, from: Data(json.utf8))
+        let recording = try StreamenDVRCoding.makeDecoder().decode(Recording.self, from: Data(json.utf8))
         #expect(recording.status == .unknown("archived"))
         #expect(recording.status.rawValue == "archived")
         #expect(recording.channelName == nil)
@@ -91,11 +91,11 @@ struct CodingTests {
     }
 
     @Test func datesEncodeWithFractionalSecondsAndDecodeEitherWay() throws {
-        let encoded = StreamenRecorderCoding.formatDate(Date(timeIntervalSince1970: 0.5))
+        let encoded = StreamenDVRCoding.formatDate(Date(timeIntervalSince1970: 0.5))
         #expect(encoded == "1970-01-01T00:00:00.500Z")
-        #expect(StreamenRecorderCoding.parseDate("1970-01-01T00:00:00Z") == Date(timeIntervalSince1970: 0))
-        #expect(StreamenRecorderCoding.parseDate("1970-01-01T00:00:00.250Z") == Date(timeIntervalSince1970: 0.25))
-        #expect(StreamenRecorderCoding.parseDate("1970-01-01T01:00:00+01:00") == Date(timeIntervalSince1970: 0))
-        #expect(StreamenRecorderCoding.parseDate("yesterday") == nil)
+        #expect(StreamenDVRCoding.parseDate("1970-01-01T00:00:00Z") == Date(timeIntervalSince1970: 0))
+        #expect(StreamenDVRCoding.parseDate("1970-01-01T00:00:00.250Z") == Date(timeIntervalSince1970: 0.25))
+        #expect(StreamenDVRCoding.parseDate("1970-01-01T01:00:00+01:00") == Date(timeIntervalSince1970: 0))
+        #expect(StreamenDVRCoding.parseDate("yesterday") == nil)
     }
 }

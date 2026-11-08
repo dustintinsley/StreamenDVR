@@ -23,7 +23,7 @@ public enum RecorderServer {
             router: router,
             configuration: .init(
                 address: .hostname(services.config.host, port: services.config.port),
-                serverName: "StreamenRecorder/\(RecorderVersion.current)"
+                serverName: "StreamenDVR/\(RecorderVersion.current)"
             ),
             logger: services.logger
         )
@@ -59,7 +59,7 @@ public enum RecorderServer {
             logger.error("ffmpeg not found (FFMPEG_PATH=\(config.ffmpegPath)); recordings will fail until it is installed")
         }
         let services = try RecorderServices(config: config, launcher: launcher, logger: logger)
-        logger.notice("StreamenRecorder \(RecorderVersion.current) \"\(config.serverName)\" (id \(services.store.identity.id)) listening on \(config.host):\(config.port), data in \(config.dataDirectory.path)")
+        logger.notice("StreamenDVR \(RecorderVersion.current) \"\(config.serverName)\" (id \(services.store.identity.id)) listening on \(config.host):\(config.port), data in \(config.dataDirectory.path)")
         if config.singleFileRecordings {
             logger.info("Finished recordings are merged into a single \(SingleFileRecording.fileName)")
         }

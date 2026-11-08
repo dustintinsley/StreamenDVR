@@ -1,5 +1,5 @@
 import Foundation
-import StreamenRecorderKit
+import StreamenDVRKit
 
 /// Server identity + playback-signing secret (`server.json`).
 public struct ServerIdentity: Codable, Sendable, Hashable {
@@ -244,7 +244,7 @@ public actor RecorderStore {
     }
 
     private static func encode(_ value: some Encodable) throws -> Data {
-        let encoder = StreamenRecorderCoding.makeEncoder()
+        let encoder = StreamenDVRCoding.makeEncoder()
         encoder.outputFormatting = [.sortedKeys, .prettyPrinted, .withoutEscapingSlashes]
         return try encoder.encode(value)
     }
@@ -252,6 +252,6 @@ public actor RecorderStore {
     private static func load<T: Decodable>(_ type: T.Type, from url: URL) throws -> T? {
         guard FileManager.default.fileExists(atPath: url.path) else { return nil }
         let data = try Data(contentsOf: url)
-        return try StreamenRecorderCoding.makeDecoder().decode(T.self, from: data)
+        return try StreamenDVRCoding.makeDecoder().decode(T.self, from: data)
     }
 }

@@ -2,7 +2,7 @@ import Foundation
 #if canImport(FoundationNetworking)
     import FoundationNetworking
 #endif
-import StreamenRecorderKit
+import StreamenDVRKit
 import Testing
 
 /// Captured request + canned response, keyed by a per-test host so suites can
@@ -80,15 +80,15 @@ final class StubURLProtocol: URLProtocol {
     }
 }
 
-@Suite("StreamenRecorderClient")
+@Suite("StreamenDVRClient")
 struct ClientTests {
     let host = "stub-\(UUID().uuidString.lowercased()).test"
 
-    private func makeClient(token: String? = "secret-token", handler: @escaping StubRegistry.Handler) -> StreamenRecorderClient {
+    private func makeClient(token: String? = "secret-token", handler: @escaping StubRegistry.Handler) -> StreamenDVRClient {
         StubRegistry.shared.register(host: host, handler: handler)
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [StubURLProtocol.self]
-        return StreamenRecorderClient(
+        return StreamenDVRClient(
             baseURL: URL(string: "http://\(host):8090")!,
             token: token,
             session: URLSession(configuration: configuration)
@@ -96,7 +96,7 @@ struct ClientTests {
     }
 
     private static func json(_ value: some Encodable) -> Data {
-        try! StreamenRecorderCoding.makeEncoder().encode(value)
+        try! StreamenDVRCoding.makeEncoder().encode(value)
     }
 
     private static func errorBody(_ code: String, _ message: String) -> Data {
@@ -115,7 +115,7 @@ struct ClientTests {
     @Test func futureAPIVersionIsRejected() async {
         let info = ServerInfo(id: UUID(), name: "nas", version: "9.0.0", apiVersion: 2)
         let client = makeClient { _ in (200, Self.json(info)) }
-        await #expect(throws: StreamenRecorderError.unsupportedAPIVersion(2)) { try await client.info() }
+        await #expect(throws: StreamenDVRError.unsupportedAPIVersion(2)) { try await client.info() }
     }
 
     @Test func createSendsBearerTokenBodyAndIdempotencyKey() async throws {
@@ -130,7 +130,7 @@ struct ClientTests {
         #expect(captured.path == "/api/v1/recordings")
         #expect(captured.headers["Authorization"] == "Bearer secret-token")
         #expect(captured.headers["Idempotency-Key"] == "key-1")
-        let sent = try StreamenRecorderCoding.makeDecoder().decode(CreateRecordingRequest.self, from: #require(captured.body))
+        let sent = try StreamenDVRCoding.makeDecoder().decode(CreateRecordingRequest.self, from: #require(captured.body))
         #expect(sent.title == "Match")
         #expect(sent.streamURL == request.streamURL)
     }
@@ -145,7 +145,7 @@ struct ClientTests {
     }
 
     @Test(arguments: [
-        (400, "invalid_request", StreamenRecorderError.invalidRequest("end must be after start")),
+        (400, "invalid_request", StreamenDVRError.invalidRequest("end must be after start")),
         (401, "unauthorized", .unauthorized),
         (401, "pairing_invalid", .unauthorized),
         (404, "not_found", .notFound),
@@ -154,14 +154,14 @@ struct ClientTests {
         (507, "insufficient_storage", .insufficientStorage),
         (500, "internal_error", .server(status: 500, code: "internal_error", message: "end must be after start")),
     ])
-    func mapsHTTPErrors(status: Int, code: String, expected: StreamenRecorderError) async {
+    func mapsHTTPErrors(status: Int, code: String, expected: StreamenDVRError) async {
         let client = makeClient { _ in (status, Self.errorBody(code, "end must be after start")) }
         await #expect(throws: expected) { _ = try await client.recordings() }
     }
 
     @Test func nonJSONErrorBodyStillMaps() async {
         let client = makeClient { _ in (502, Data("Bad Gateway".utf8)) }
-        await #expect(throws: StreamenRecorderError.server(status: 502, code: nil, message: nil)) { _ = try await client.status() }
+        await #expect(throws: StreamenDVRError.server(status: 502, code: nil, message: nil)) { _ = try await client.status() }
     }
 
     @Test func failedPostIsNeverRetried() async {
@@ -175,8 +175,8 @@ struct ClientTests {
         // No handler registered for this host → the stub fails the load.
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [StubURLProtocol.self]
-        let client = StreamenRecorderClient(baseURL: URL(string: "http://unregistered.test:8090")!, session: URLSession(configuration: configuration))
-        await #expect(throws: StreamenRecorderError.transport(URLError(.cannotConnectToHost))) { _ = try await client.status() }
+        let client = StreamenDVRClient(baseURL: URL(string: "http://unregistered.test:8090")!, session: URLSession(configuration: configuration))
+        await #expect(throws: StreamenDVRError.transport(URLError(.cannotConnectToHost))) { _ = try await client.status() }
     }
 
     @Test func malformedSuccessBodyIsADecodingError() async {
@@ -184,7 +184,7 @@ struct ClientTests {
         do {
             _ = try await client.status()
             Issue.record("expected a decoding error")
-        } catch let StreamenRecorderError.decoding(message) {
+        } catch let StreamenDVRError.decoding(message) {
             #expect(!message.isEmpty)
         } catch {
             Issue.record("unexpected error \(error)")
@@ -192,7 +192,7 @@ struct ClientTests {
     }
 
     @Test func errorsHaveShortDescriptions() {
-        #expect(StreamenRecorderError.rateLimited.localizedDescription == "Too many attempts. Try again in a minute.")
-        #expect(StreamenRecorderError.conflict(code: "x", message: "Too many recordings").localizedDescription == "Too many recordings")
+        #expect(StreamenDVRError.rateLimited.localizedDescription == "Too many attempts. Try again in a minute.")
+        #expect(StreamenDVRError.conflict(code: "x", message: "Too many recordings").localizedDescription == "Too many recordings")
     }
 }

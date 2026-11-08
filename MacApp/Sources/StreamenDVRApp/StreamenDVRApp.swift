@@ -4,7 +4,7 @@ import RecorderCore
 import SwiftUI
 
 @main
-struct StreamenRecorderApp: App {
+struct StreamenDVRApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate
 
     var body: some Scene {
@@ -12,7 +12,7 @@ struct StreamenRecorderApp: App {
             MenuContent(controller: delegate.controller)
         } label: {
             Image(systemName: delegate.controller.activeRecordings > 0 ? "record.circle.fill" : "record.circle")
-                .accessibilityLabel("StreamenRecorder")
+                .accessibilityLabel("StreamenDVR")
         }
         .menuBarExtraStyle(.window)
     }
@@ -30,7 +30,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             stderr.logLevel = level
             return MultiplexLogHandler([stderr, FileLogHandler(label: label, logLevel: level)])
         }
-        controller = ServerController(config: config, logger: Logger(label: "streamen-recorder"))
+        controller = ServerController(config: config, logger: Logger(label: "streamen-dvr"))
         super.init()
     }
 

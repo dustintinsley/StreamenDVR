@@ -3,7 +3,7 @@ import Foundation
 // MARK: - API constants
 
 /// Version and path constants of the HTTP API this Kit speaks.
-public enum StreamenRecorderAPI {
+public enum StreamenDVRAPI {
     /// The API version this Kit implements. Bumped only on breaking changes.
     public static let version = 1
     /// Path prefix of every JSON endpoint.
@@ -13,7 +13,7 @@ public enum StreamenRecorderAPI {
 }
 
 /// Machine-readable error codes the server returns in `ErrorResponse.error.code`.
-public enum StreamenRecorderErrorCode {
+public enum StreamenDVRErrorCode {
     public static let unauthorized = "unauthorized"
     public static let pairingInvalid = "pairing_invalid"
     public static let rateLimited = "rate_limited"

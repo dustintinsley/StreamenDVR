@@ -1,15 +1,15 @@
 // swift-tools-version: 6.0
-// StreamenRecorder — self-hosted DVR server for the Streamen IPTV app.
+// StreamenDVR — self-hosted DVR server for the Streamen IPTV app.
 
 import PackageDescription
 
 let swiftSettings: [SwiftSetting] = [.swiftLanguageMode(.v6)]
 
 let package = Package(
-    name: "StreamenRecorder",
+    name: "StreamenDVR",
     platforms: [.macOS(.v15)],
     products: [
-        .executable(name: "streamen-recorder", targets: ["streamen-recorder"]),
+        .executable(name: "streamen-dvr", targets: ["streamen-dvr"]),
         .library(name: "RecorderCore", targets: ["RecorderCore"]),
     ],
     dependencies: [
@@ -25,7 +25,7 @@ let package = Package(
         .target(
             name: "RecorderCore",
             dependencies: [
-                .product(name: "StreamenRecorderKit", package: "Kit"),
+                .product(name: "StreamenDVRKit", package: "Kit"),
                 .product(name: "Hummingbird", package: "hummingbird"),
                 .product(name: "Crypto", package: "swift-crypto"),
                 .product(name: "Logging", package: "swift-log"),
@@ -35,7 +35,7 @@ let package = Package(
             swiftSettings: swiftSettings
         ),
         .executableTarget(
-            name: "streamen-recorder",
+            name: "streamen-dvr",
             dependencies: [
                 "RecorderCore",
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),

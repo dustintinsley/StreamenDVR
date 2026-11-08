@@ -1,7 +1,7 @@
 import AppKit
 import Foundation
 import Logging
-import StreamenRecorderKit
+import StreamenDVRKit
 import Observation
 import RecorderCore
 import ServiceLifecycle
@@ -142,7 +142,7 @@ final class ServerController {
         pairingCode = code
         // A sleeping Mac misses scheduled starts too, so stay awake while any are pending.
         if active > 0 || scheduled > 0 {
-            sleepAssertion.hold(reason: "StreamenRecorder has recordings in progress or scheduled")
+            sleepAssertion.hold(reason: "StreamenDVR has recordings in progress or scheduled")
         } else {
             sleepAssertion.release()
         }
@@ -178,7 +178,7 @@ extension RecorderConfig {
         var config = RecorderConfig.fromEnvironment(environment)
         if environment["DATA_DIR"] == nil {
             config.dataDirectory = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-                .appendingPathComponent("StreamenRecorder", isDirectory: true)
+                .appendingPathComponent("StreamenDVR", isDirectory: true)
         }
         if environment["FFMPEG_PATH"] == nil {
             let candidates: [String?] = [
