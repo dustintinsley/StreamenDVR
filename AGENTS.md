@@ -1,6 +1,6 @@
 # StreamenDVR: Agent Guide
 
-A self-hosted DVR server for the Streamen IPTV app (`bilipp/Lume`). Streamen sends
+A self-hosted DVR server for the Streamen IPTV app (`dustintinsley/Streamen`). Streamen sends
 "record this stream from A to B". The server records it with ffmpeg to HLS
 and later hands out signed playback URLs.
 
@@ -121,7 +121,7 @@ talking only to the `RecordingProcess` protocol.
 swift build && swift test
 (cd Kit && swift test)
 xcodebuild build -scheme StreamenDVRKit -destination 'generic/platform=tvOS'   # from Kit/
-docker build -t streamendvr .
+docker build -t streamen-dvr .
 (cd MacApp && swift build)          # macOS only; keeps the root package Linux-clean
 ```
 

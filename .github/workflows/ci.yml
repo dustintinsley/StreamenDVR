@@ -171,7 +171,7 @@ jobs:
         with:
           context: .
           platforms: linux/${{ matrix.arch }}
-          outputs: ${{ env.IS_RELEASE == 'true' && 'type=image,name=ghcr.io/bilipp/lumerecorder,push-by-digest=true,name-canonical=true,push=true' || 'type=cacheonly' }}
+          outputs: ${{ env.IS_RELEASE == 'true' && 'type=image,name=ghcr.io/dustintinsley/streamen-dvr,push-by-digest=true,name-canonical=true,push=true' || 'type=cacheonly' }}
           cache-from: type=gha,scope=${{ matrix.arch }}
           cache-to: type=gha,mode=max,scope=${{ matrix.arch }}
       - name: Export digest
@@ -211,7 +211,7 @@ jobs:
       - id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/bilipp/lumerecorder
+          images: ghcr.io/dustintinsley/streamen-dvr
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
@@ -221,6 +221,6 @@ jobs:
         run: |
           docker buildx imagetools create \
             $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-            $(printf 'ghcr.io/bilipp/lumerecorder@sha256:%s ' *)
+            $(printf 'ghcr.io/dustintinsley/streamen-dvr@sha256:%s ' *)
       - name: Inspect image
-        run: docker buildx imagetools inspect ghcr.io/bilipp/lumerecorder:${{ steps.meta.outputs.version }}
+        run: docker buildx imagetools inspect ghcr.io/dustintinsley/streamen-dvr:${{ steps.meta.outputs.version }}

@@ -1,6 +1,6 @@
 # StreamenDVR
 
-A small, self-hosted DVR server for the [Streamen](https://github.com/bilipp/Lume)
+A small, self-hosted DVR server for the [Streamen](https://github.com/dustintinsley/Streamen)
 IPTV app. Streamen schedules a recording ("record this programme"); StreamenDVR
 runs on an always-on machine (NAS, mini PC, Raspberry Pi, Mac) and records the
 stream with ffmpeg to HLS on disk, even when every Apple device is asleep.
@@ -22,7 +22,7 @@ links.
 On a Mac you can run StreamenDVR as a menu-bar app instead of a container:
 
 1. Download `StreamenDVR-<version>.dmg` from the
-   [latest release](https://github.com/bilipp/LumeRecorder/releases/latest),
+   [latest release](https://github.com/dustintinsley/StreamenDVR/releases/latest),
    open it, and drag StreamenDVR into Applications.
 2. Open the app. A record icon appears in the menu bar. Click it to see the
    pairing code, recording status and paired devices.
@@ -37,31 +37,26 @@ from [Configuration](#configuration) still apply. A Mac whose lid is closed
 
 ## Quick start (Docker Compose)
 
-```yaml
-# docker-compose.yml
-services:
-  streamen-dvr:
-    image: ghcr.io/bilipp/lumerecorder:latest
-    container_name: streamen-dvr
-    restart: unless-stopped
-    network_mode: host          # needed for Bonjour discovery
-    volumes:
-      - ./data:/data
-```
-
 ```bash
-docker compose up -d
+git clone -b dustin-custom-v2 https://github.com/dustintinsley/StreamenDVR.git
+cd StreamenDVR
+docker compose up -d --build      # first build takes a while (Swift, ~4 GB RAM)
 docker logs streamen-dvr | grep "Pairing code"
 ```
 
-Or build from this checkout: `docker build -t streamendvr .`
+`docker-compose.yml` builds the image from this checkout as `streamen-dvr`;
+set `TZ` in it to your time zone. Release tags (`v*`) also publish a
+multi-arch image to `ghcr.io/dustintinsley/streamen-dvr`, which the compose
+file can use instead of building once one exists.
+
+To update: `git pull && docker compose up -d --build`.
 
 ### docker run
 
 ```bash
-docker build -t streamendvr .
+docker build -t streamen-dvr .
 docker run -d --name streamen-dvr --restart unless-stopped \
-  --network host -v "$PWD/data:/data" streamendvr
+  --network host -v "$PWD/data:/data" streamen-dvr
 docker exec streamen-dvr streamen-dvr pair
 ```
 
@@ -73,11 +68,11 @@ address.
 
 ```bash
 container system start
-container build -t streamendvr:dev .
+container build -t streamen-dvr:dev .
 mkdir -p ~/StreamenDVR-data
 container run -d --name streamen-dvr \
   -p 0.0.0.0:8090:8090 -v ~/StreamenDVR-data:/data \
-  -e BONJOUR=0 streamendvr:dev
+  -e BONJOUR=0 streamen-dvr:dev
 container exec streamen-dvr streamen-dvr pair
 ```
 

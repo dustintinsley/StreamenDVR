@@ -78,7 +78,7 @@ Configured with:
   ${configure_flags[*]}
 
 The build script is MacApp/scripts/build-ffmpeg.sh in
-https://github.com/bilipp/LumeRecorder.
+https://github.com/dustintinsley/StreamenDVR.
 EOF
 
 rm -rf "$work"/src-*

@@ -1,7 +1,10 @@
 services:
   streamen-dvr:
-    image: ghcr.io/bilipp/lumerecorder:latest
-    # build: .            # or build locally from this checkout
+    # Built from this checkout: `docker compose up -d --build`. Once a release
+    # is published, `image: ghcr.io/dustintinsley/streamen-dvr:latest` (with
+    # `build` removed) pulls it instead.
+    image: streamen-dvr:latest
+    build: .
     container_name: streamen-dvr
     restart: unless-stopped
     # Host networking lets avahi advertise _streamen-dvr._tcp on your LAN so
@@ -17,7 +20,7 @@ services:
       # PUBLIC_URL: "https://dvr.example.com"
       # BONJOUR: "0"          # set if the host already runs avahi-daemon
       # SINGLE_FILE_RECORDINGS: "1"   # one recording.ts per finished recording
-      TZ: "Europe/Berlin"
+      TZ: "Europe/Berlin"     # your time zone, e.g. America/New_York
       LOG_LEVEL: "info"
 
   # Bridge mode (Docker Desktop on macOS/Windows, or if you don't want host
@@ -25,7 +28,8 @@ services:
   # manually as <host-ip>:8090. Replace the service above with:
   #
   # streamen-dvr:
-  #   image: ghcr.io/bilipp/lumerecorder:latest
+  #   image: streamen-dvr:latest
+  #   build: .
   #   container_name: streamen-dvr
   #   restart: unless-stopped
   #   ports:
