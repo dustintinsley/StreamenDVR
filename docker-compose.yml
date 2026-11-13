@@ -1,10 +1,10 @@
 services:
   streamen-dvr:
-    # Built from this checkout: `docker compose up -d --build`. Once a release
-    # is published, `image: ghcr.io/dustintinsley/streamen-dvr:latest` (with
-    # `build` removed) pulls it instead.
-    image: streamen-dvr:latest
-    build: .
+    # The published multi-arch image (amd64 + arm64): `docker compose up -d`,
+    # and `docker compose pull && docker compose up -d` to update. To build
+    # from this checkout instead, replace `image:` with `build: .` and add
+    # `--build`.
+    image: streamen.app/streamen-dvr:latest
     container_name: streamen-dvr
     restart: unless-stopped
     # Host networking lets avahi advertise _streamen-dvr._tcp on your LAN so
@@ -28,8 +28,7 @@ services:
   # manually as <host-ip>:8090. Replace the service above with:
   #
   # streamen-dvr:
-  #   image: streamen-dvr:latest
-  #   build: .
+  #   image: streamen.app/streamen-dvr:latest
   #   container_name: streamen-dvr
   #   restart: unless-stopped
   #   ports:

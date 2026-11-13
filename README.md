@@ -35,44 +35,74 @@ ffmpeg cleanly when you quit. Data lives in
 from [Configuration](#configuration) still apply. A Mac whose lid is closed
 (without an external display) still sleeps and misses recordings.
 
-## Quick start (Docker Compose)
+## Quick start (Docker)
 
-```bash
-git clone -b dustin-custom-v2 https://github.com/dustintinsley/StreamenDVR.git
-cd StreamenDVR
-docker compose up -d --build      # first build takes a while (Swift, ~4 GB RAM)
-docker logs streamen-dvr | grep "Pairing code"
+The image is `streamen.app/streamen-dvr` (amd64 and arm64; `latest` or a
+version such as `1.0.0`). Nothing to build.
+
+### Linux / NAS (Docker Compose)
+
+Save this as `docker-compose.yml`, set `TZ` to your time zone, then run
+`docker compose up -d`:
+
+```yaml
+services:
+  streamen-dvr:
+    image: streamen.app/streamen-dvr:latest
+    container_name: streamen-dvr
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - ./data:/data
+    environment:
+      TZ: "America/New_York"
 ```
 
-`docker-compose.yml` builds the image from this checkout as `streamen-dvr`;
-set `TZ` in it to your time zone. Release tags (`v*`) also publish a
-multi-arch image to `ghcr.io/dustintinsley/streamen-dvr`, which the compose
-file can use instead of building once one exists.
+Host networking lets Streamen find the server automatically (Bonjour). On a
+NAS, paste the same compose file into Container Manager, Portainer or your
+NAS's Docker app. The pairing code is in the log:
+`docker logs streamen-dvr | grep "Pairing code"`.
 
-To update: `git pull && docker compose up -d --build`.
+To update: `docker compose pull && docker compose up -d`.
+
+### Docker Desktop (macOS / Windows)
+
+Docker Desktop's network can't carry Bonjour, so publish the port and add the
+server in Streamen by address (`<computer-ip>:8090`):
+
+```yaml
+services:
+  streamen-dvr:
+    image: streamen.app/streamen-dvr:latest
+    container_name: streamen-dvr
+    restart: unless-stopped
+    ports:
+      - "8090:8090"
+    volumes:
+      - ./data:/data
+    environment:
+      BONJOUR: "0"
+      TZ: "America/New_York"
+```
 
 ### docker run
 
 ```bash
-docker build -t streamen-dvr .
 docker run -d --name streamen-dvr --restart unless-stopped \
-  --network host -v "$PWD/data:/data" streamen-dvr
+  --network host -v "$PWD/data:/data" streamen.app/streamen-dvr:latest
 docker exec streamen-dvr streamen-dvr pair
 ```
 
-On Docker Desktop (macOS/Windows) host networking can't carry Bonjour: publish
-the port instead (`-p 8090:8090 -e BONJOUR=0`) and add the server in Streamen by
-address.
+On Docker Desktop use `-p 8090:8090 -e BONJOUR=0` in place of `--network host`.
 
 ### Apple `container` (macOS on Apple silicon)
 
 ```bash
 container system start
-container build -t streamen-dvr:dev .
 mkdir -p ~/StreamenDVR-data
 container run -d --name streamen-dvr \
   -p 0.0.0.0:8090:8090 -v ~/StreamenDVR-data:/data \
-  -e BONJOUR=0 streamen-dvr:dev
+  -e BONJOUR=0 streamen.app/streamen-dvr:latest
 container exec streamen-dvr streamen-dvr pair
 ```
 
@@ -84,6 +114,13 @@ The server runs as the unprivileged `streamen` user. The entrypoint hands `/data
 to that user when it can; shared host folders (Docker Desktop, Apple
 `container`) refuse `chown`, in which case it runs as the folder's owner or, if
 only root can write there, as root, and says so in the log.
+
+### Build the image yourself
+
+`docker-compose.yml` in this repo uses the published image; to build from a
+checkout instead, replace its `image:` line with `build: .` and run
+`docker compose up -d --build` (the first build takes a while: Swift, ~4 GB
+RAM). With Apple `container`: `container build -t streamen-dvr:dev .`.
 
 ### Without Docker
 
