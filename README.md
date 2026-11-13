@@ -204,7 +204,7 @@ The server advertises `_streamen-dvr._tcp` with TXT records `id=<server id>`,
       <type>_streamen-dvr._tcp</type>
       <port>8090</port>
       <txt-record>id=PASTE-SERVER-ID</txt-record>
-      <txt-record>version=0.3.1</txt-record>
+      <txt-record>version=1.0.1</txt-record>
       <txt-record>api=1</txt-record>
     </service>
   </service-group>

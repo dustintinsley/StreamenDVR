@@ -4,6 +4,14 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [1.0.1] - 2026-11-12
+
+### Changed
+- Renamed from Lume Recorder to StreamenDVR. The Docker image is
+  `streamen.app/streamen-dvr` (mirrored from `ghcr.io/dustintinsley/streamen-dvr`),
+  and the Mac app's bundle id is `com.hardheaded.streamendvr`.
+- The version now matches the Streamen app's 1.0.1.
+
 ## [0.3.1] - 2026-10-27
 
 ### Changed
