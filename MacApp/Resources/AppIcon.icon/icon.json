@@ -1,6 +1,6 @@
 {
   "fill": {
-    "automatic-gradient": "display-p3:0.95393,1.00000,0.95327,1.00000"
+    "solid": "srgb:0.05490,0.08627,0.14902,1.00000"
   },
   "groups": [
     {
@@ -9,146 +9,25 @@
           "blend-mode": "normal",
           "glass": false,
           "hidden": false,
-          "image-name": "record-dot.svg",
-          "name": "record-dot",
+          "image-name": "streamen-logo.svg",
+          "name": "streamen",
           "position": {
-            "scale": 2.4,
+            "scale": 1,
             "translation-in-points": [
-              250,
-              250
+              0,
+              0
             ]
           }
         }
       ],
-      "lighting": "combined",
       "shadow": {
-        "kind": "neutral",
-        "opacity": 0.5
+        "kind": "none",
+        "opacity": 0
       },
-      "specular": true,
+      "specular": false,
       "translucency": {
         "enabled": false,
-        "value": 0.5
-      }
-    },
-    {
-      "layers": [
-        {
-          "blend-mode": "normal",
-          "fill-specializations": [
-            {
-              "value": {
-                "linear-gradient": [
-                  "display-p3:1.00000,0.54437,0.84501,1.00000",
-                  "display-p3:0.43938,0.00000,0.70496,1.00000"
-                ],
-                "orientation": {
-                  "start": {
-                    "x": 0.5,
-                    "y": 0.27784247008866125
-                  },
-                  "stop": {
-                    "x": 0.189814101472092,
-                    "y": 0.8720039438726773
-                  }
-                }
-              }
-            },
-            {
-              "appearance": "dark",
-              "value": {
-                "linear-gradient": [
-                  "display-p3:1.00000,0.54510,0.84314,1.00000",
-                  "display-p3:0.43922,0.00000,0.70588,1.00000"
-                ],
-                "orientation": {
-                  "start": {
-                    "x": 0.5,
-                    "y": 0.27784247008866125
-                  },
-                  "stop": {
-                    "x": 0.189814101472092,
-                    "y": 0.8720039438726773
-                  }
-                }
-              }
-            }
-          ],
-          "glass": false,
-          "hidden": false,
-          "image-name": "streamen-bw.svg",
-          "name": "streamen-bw",
-          "position": {
-            "scale": 2,
-            "translation-in-points": [
-              0,
-              0
-            ]
-          }
-        },
-        {
-          "blend-mode": "normal",
-          "fill-specializations": [
-            {
-              "value": {
-                "linear-gradient": [
-                  "display-p3:0.31994,0.54437,0.84501,1.00000",
-                  "display-p3:0.96783,0.93485,0.00000,1.00000"
-                ],
-                "orientation": {
-                  "start": {
-                    "x": 0.5,
-                    "y": 0.27784247008866125
-                  },
-                  "stop": {
-                    "x": 0.189814101472092,
-                    "y": 0.8720039438726773
-                  }
-                }
-              }
-            },
-            {
-              "appearance": "dark",
-              "value": {
-                "linear-gradient": [
-                  "display-p3:1.00000,0.54437,0.84501,1.00000",
-                  "display-p3:0.43938,0.00000,0.70496,1.00000"
-                ],
-                "orientation": {
-                  "start": {
-                    "x": 0.5,
-                    "y": 0.27784247008866125
-                  },
-                  "stop": {
-                    "x": 0.189814101472092,
-                    "y": 0.8720039438726773
-                  }
-                }
-              }
-            }
-          ],
-          "glass": false,
-          "hidden": true,
-          "image-name": "streamen-bw.svg",
-          "name": "streamen-bw",
-          "position": {
-            "scale": 2,
-            "translation-in-points": [
-              0,
-              0
-            ]
-          }
-        }
-      ],
-      "lighting": "individual",
-      "shadow": {
-        "kind": "neutral",
-        "opacity": 0.5
-      },
-      "specular": true,
-      "translucency": {
-        "enabled": true,
-        "value": 0.5
+        "value": 0
       }
     }
   ],

@@ -4,6 +4,13 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [1.1.1] - 2026-11-13
+
+### Changed
+- The Mac app's icon is the Streamen icon with a red record dot on the
+  screen, in place of the Lume shape.
+- The version follows the Streamen app's 1.1.1.
+
 ## [1.0.1] - 2026-11-12
 
 ### Changed
