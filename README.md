@@ -21,9 +21,11 @@ links.
 
 On a Mac you can run StreamenDVR as a menu-bar app instead of a container:
 
-1. Download `StreamenDVR-<version>.dmg` from the
-   [latest release](https://github.com/dustintinsley/StreamenDVR/releases/latest),
-   open it, and drag StreamenDVR into Applications.
+1. Download [StreamenDVR.dmg](https://streamen.app/download/StreamenDVR.dmg)
+   (always the latest version; past versions are on the
+   [releases page](https://github.com/dustintinsley/StreamenDVR/releases)),
+   open it, and drag StreamenDVR into Applications. It's signed and notarized
+   by Apple, so it opens without a Gatekeeper warning.
 2. Open the app. A record icon appears in the menu bar. Click it to see the
    pairing code, recording status and paired devices.
 
