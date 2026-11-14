@@ -22,7 +22,8 @@ show_pathbar = False
 show_sidebar = False
 icon_size = 128
 text_size = 13
-hide_extensions = [app_name]
+# No hide_extensions: dmgbuild sets it as Finder info on the app after it
+# has been signed, so the copy in the DMG would differ from what was signed.
 icon_locations = {
     app_name: (160, 140),
     "Applications": (480, 140),

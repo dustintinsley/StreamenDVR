@@ -297,8 +297,10 @@ use).
 
 ### Signed Mac builds in CI
 
-The `macOS app` job signs every push to `main` with a Developer ID
-certificate. On a `v*` tag it also notarizes the app and attaches
+CI runs on pushes to `main`, on `v*` tags and on pull requests; pushes to
+other branches, `dustin-custom-v2` included, don't run it. The `macOS app` job
+signs pushes to `main` with a Developer ID certificate when the secrets below
+are set. On a `v*` tag it also notarizes the app and attaches
 `StreamenDVR-<version>.dmg` to the GitHub release. A release tag fails
 without these repository secrets, and PRs build ad-hoc signed:
 
